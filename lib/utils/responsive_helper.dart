@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 /// Responsive helper utility for creating adaptive layouts
 class ResponsiveHelper {
   // Breakpoints for different screen sizes
+  static const double smallMobileBreakpoint = 360; // Very small phones (like 74.8mm width)
   static const double mobileBreakpoint = 600;
   static const double tabletBreakpoint = 1024;
   static const double desktopBreakpoint = 1440;
@@ -15,6 +16,11 @@ class ResponsiveHelper {
   /// Get screen height
   static double screenHeight(BuildContext context) {
     return MediaQuery.of(context).size.height;
+  }
+
+  /// Check if screen is very small mobile (like 74.8mm width phones)
+  static bool isSmallMobile(BuildContext context) {
+    return screenWidth(context) < smallMobileBreakpoint;
   }
 
   /// Check if screen is mobile
@@ -95,7 +101,10 @@ class ResponsiveHelper {
 
   /// Get responsive font size
   static double fontSize(BuildContext context, double baseSize) {
-    if (isMobile(context)) {
+    if (isSmallMobile(context)) {
+      // Very small phones: reduce font size by 10-15%
+      return baseSize * 0.85;
+    } else if (isMobile(context)) {
       return baseSize;
     } else if (isTablet(context)) {
       return baseSize * 1.1;
@@ -106,7 +115,10 @@ class ResponsiveHelper {
 
   /// Get responsive icon size
   static double iconSize(BuildContext context, double baseSize) {
-    if (isMobile(context)) {
+    if (isSmallMobile(context)) {
+      // Very small phones: reduce icon size by 10%
+      return baseSize * 0.9;
+    } else if (isMobile(context)) {
       return baseSize;
     } else if (isTablet(context)) {
       return baseSize * 1.2;
@@ -171,7 +183,10 @@ class ResponsiveHelper {
   /// Calculate responsive value based on screen size
   static double _getResponsiveValue(BuildContext context, double baseValue) {
     final width = screenWidth(context);
-    if (width < mobileBreakpoint) {
+    if (width < smallMobileBreakpoint) {
+      // Very small phones: reduce spacing by 15%
+      return baseValue * 0.85;
+    } else if (width < mobileBreakpoint) {
       // Mobile: use base value
       return baseValue;
     } else if (width < tabletBreakpoint) {
@@ -197,7 +212,10 @@ class ResponsiveHelper {
 
   /// Get responsive horizontal padding for content
   static double contentPadding(BuildContext context) {
-    if (isMobile(context)) {
+    if (isSmallMobile(context)) {
+      // Very small phones: reduce padding
+      return 12;
+    } else if (isMobile(context)) {
       return 16;
     } else if (isTablet(context)) {
       return 24;
@@ -208,7 +226,10 @@ class ResponsiveHelper {
 
   /// Get responsive card padding
   static EdgeInsets cardPadding(BuildContext context) {
-    if (isMobile(context)) {
+    if (isSmallMobile(context)) {
+      // Very small phones: reduce padding
+      return const EdgeInsets.all(12);
+    } else if (isMobile(context)) {
       return const EdgeInsets.all(16);
     } else if (isTablet(context)) {
       return const EdgeInsets.all(20);

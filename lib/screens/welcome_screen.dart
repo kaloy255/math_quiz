@@ -1,14 +1,81 @@
 import 'package:flutter/material.dart';
+import '../services/database_service.dart';
 import '../widgets/app_bar_widget.dart';
 import '../utils/responsive_helper.dart';
 import '../utils/theme_helper.dart';
+import 'student_dashboard_screen.dart';
+import 'teacher_dashboard_screen.dart';
 
-class WelcomeScreen extends StatelessWidget {
+class WelcomeScreen extends StatefulWidget {
   const WelcomeScreen({super.key});
 
   @override
+  State<WelcomeScreen> createState() => _WelcomeScreenState();
+}
+
+class _WelcomeScreenState extends State<WelcomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    // Check if user is already logged in and redirect
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _checkLoginAndRedirect();
+    });
+  }
+
+  void _checkLoginAndRedirect() {
+    if (DatabaseService.isLoggedIn()) {
+      final user = DatabaseService.getCurrentUser();
+      if (user != null) {
+        // Redirect to appropriate dashboard based on role
+        if (user.role == 'student') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const StudentDashboardScreen(),
+            ),
+          );
+        } else if (user.role == 'teacher') {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const TeacherDashboardScreen(),
+            ),
+          );
+        }
+      }
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PopScope(
+      canPop: false, // Prevent back navigation when logged in
+      onPopInvoked: (didPop) {
+        if (didPop) return;
+        // If user tries to go back and is logged in, redirect to dashboard
+        if (DatabaseService.isLoggedIn()) {
+          final user = DatabaseService.getCurrentUser();
+          if (user != null) {
+            if (user.role == 'student') {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const StudentDashboardScreen(),
+                ),
+              );
+            } else if (user.role == 'teacher') {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const TeacherDashboardScreen(),
+                ),
+              );
+            }
+          }
+        }
+      },
+      child: Scaffold(
       appBar: const MathQuestAppBar(),
       backgroundColor: ThemeHelper.getContainerColor(context),
       body: Container(
@@ -98,6 +165,7 @@ class WelcomeScreen extends StatelessWidget {
                     ),
                   ),
                 ],
+              ),
               ),
             ),
           ),

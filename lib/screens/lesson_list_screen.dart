@@ -3,6 +3,7 @@ import 'lesson_content_screen.dart';
 import 'pdf_viewer_screen.dart';
 import '../utils/responsive_helper.dart';
 import '../utils/theme_helper.dart';
+import '../widgets/app_logo.dart';
 
 class LessonListScreen extends StatefulWidget {
   final int quarterNumber;
@@ -23,52 +24,100 @@ class _LessonListScreenState extends State<LessonListScreen> {
         return [
           {
             'id': '1',
-            'title': 'Introduction to Algebra',
+            'title': 'Quadratic Equations',
             'pdf': 'assets/lessons/Quarter_1/M1_Q1 MATH.pdf',
           },
           {
             'id': '2',
-            'title': 'Variables and Expressions',
+            'title':
+                'The Nature of the Roots of a QuadraticEquation \n\n The Sum and Product of the Roots of Quadratic Equations',
             'pdf': 'assets/lessons/Quarter_1/M2_Q1 MATH.pdf',
           },
           {
             'id': '3',
-            'title': 'Order of Operations',
+            'title': 'Solve Equations Transformable to Quadratic Equation',
             'pdf': 'assets/lessons/Quarter_1/M3_Q1 MATH.pdf',
           },
           {
             'id': '4',
-            'title': 'Properties of Real Numbers',
+            'title': 'Word Problems Involving Quadratic and Rational Equations',
             'pdf': 'assets/lessons/Quarter_1/M4_Q1 MATH.pdf',
           },
           {
             'id': '5',
-            'title': 'Solving One-Step Equations',
+            'title': 'Quadratic Inequalities',
             'pdf': 'assets/lessons/Quarter_1/M5_Q1 MATH.pdf',
           },
           {
             'id': '6',
-            'title': 'Solving Multi-Step Equations',
+            'title':
+                'Models Real-Life Situations Using Quadratic Functions & \n\nRepresent A Quadratic Function using: \na. Table of Values, \nb. Graph, and \nc. Equation.',
             'pdf': 'assets/lessons/Quarter_1/M6_Q1 MATH.PDF',
           },
           {
             'id': '7',
-            'title': 'Working with Fractions in Equations',
+            'title': 'Vertex Form of the Quadratic Function',
             'pdf': 'assets/lessons/Quarter_1/M7_Q1 MATH.pdf',
           },
           {
             'id': '8',
-            'title': 'Word Problems with Equations',
+            'title': 'Graph of Quadratic Function',
             'pdf': 'assets/lessons/Quarter_1/M8_Q1 MATH.pdf',
           },
           {
             'id': '9',
-            'title': 'Review and Practice Problems',
+            'title': 'Finding Equation of a Quadratic Function',
             'pdf': 'assets/lessons/Quarter_1/M9_Q1 MATH.pdf',
           },
         ];
       case 2:
-        return []; // Empty - no lessons added yet
+        return [
+          {
+            'id': '1',
+            'title': 'Direct and Inverse Variations',
+            'pdf': 'assets/lessons/Quarter_2/M1_Q1 MATH.pdf',
+          },
+          {
+            'id': '2',
+            'title': 'Joint and Combined Variations',
+            'pdf': 'assets/lessons/Quarter_2/M2_Q1 MATH.pdf',
+          },
+          {
+            'id': '3',
+            'title': 'Simplifying Expressions Involving Integral Exponents',
+            'pdf': 'assets/lessons/Quarter_2/M3_Q1 MATH.pdf',
+          },
+          {
+            'id': '4',
+            'title': ' Simplifying Expressions Involving Rational Exponents',
+            'pdf': 'assets/lessons/Quarter_2/M4_Q1 MATH.pdf',
+          },
+          {
+            'id': '5',
+            'title': 'Radical Expressions',
+            'pdf': 'assets/lessons/Quarter_2/M5_Q1 MATH.pdf',
+          },
+          {
+            'id': '6',
+            'title': 'Operations on Radical Expressions',
+            'pdf': 'assets/lessons/Quarter_2/M6_Q1 MATH.PDF',
+          },
+          {
+            'id': '7',
+            'title': 'Operations on Radical Expressions',
+            'pdf': 'assets/lessons/Quarter_2/M7_Q1 MATH.pdf',
+          },
+          {
+            'id': '8',
+            'title': 'Solving Radical Equations',
+            'pdf': 'assets/lessons/Quarter_2/M8_Q1 MATH.pdf',
+          },
+          {
+            'id': '9',
+            'title': 'Problem Solving Involving Radical Expressions',
+            'pdf': 'assets/lessons/Quarter_2/M9_Q1 MATH.pdf',
+          },
+        ]; // Empty - no lessons added yet
       case 3:
         return []; // Empty - no lessons added yet
       case 4:
@@ -95,11 +144,18 @@ class _LessonListScreenState extends State<LessonListScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = ThemeHelper.isDarkMode(context);
+    final textColor = ThemeHelper.getTextColor(context);
+    final secondaryTextColor = ThemeHelper.getSecondaryTextColor(context);
+    final cardColor = ThemeHelper.getCardColor(context);
+    final elevatedColor = ThemeHelper.getElevatedColor(context);
+    final borderColor = ThemeHelper.getBorderColor(context);
+
     return Scaffold(
       backgroundColor: ThemeHelper.getContainerColor(context),
       body: Container(
         decoration: BoxDecoration(
-          color: ThemeHelper.getContainerColor(context),
+          gradient: ThemeHelper.getBackgroundGradient(context),
         ),
         child: SafeArea(
           child: Column(
@@ -112,12 +168,9 @@ class _LessonListScreenState extends State<LessonListScreen> {
                   horizontal: ResponsiveHelper.contentPadding(context),
                   vertical: 12,
                 ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
+                decoration: BoxDecoration(
+                  gradient: ThemeHelper.getHeaderGradient(context),
+                  boxShadow: ThemeHelper.getElevation(context, 6),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -125,42 +178,22 @@ class _LessonListScreenState extends State<LessonListScreen> {
                     IconButton(
                       icon: Icon(
                         Icons.arrow_back,
-                        color: Colors.white,
+                        color: textColor,
                         size: ResponsiveHelper.iconSize(context, 24),
                       ),
                       onPressed: () => Navigator.pop(context),
                     ),
                     Row(
                       children: [
-                        // M Logo
-                        Container(
-                          width: ResponsiveHelper.iconSize(context, 40),
-                          height: ResponsiveHelper.iconSize(context, 40),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveHelper.borderRadius(context, 8),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'M',
-                              style: TextStyle(
-                                color: const Color(0xFF6BBF59),
-                                fontSize: ResponsiveHelper.fontSize(
-                                  context,
-                                  24,
-                                ),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
+                        AppLogo(
+                          backgroundColor: elevatedColor,
+                          withGlow: isDark,
                         ),
                         SizedBox(width: ResponsiveHelper.spacing(context, 12)),
                         Text(
                           'MathQuest',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: textColor,
                             fontSize: ResponsiveHelper.fontSize(context, 24),
                             fontWeight: FontWeight.bold,
                           ),
@@ -171,12 +204,13 @@ class _LessonListScreenState extends State<LessonListScreen> {
                       width: ResponsiveHelper.iconSize(context, 40),
                       height: ResponsiveHelper.iconSize(context, 40),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: elevatedColor.withOpacity(isDark ? 0.6 : 0.2),
                         shape: BoxShape.circle,
+                        boxShadow: ThemeHelper.getElevation(context, 4),
                       ),
                       child: Icon(
                         Icons.person,
-                        color: Colors.white,
+                        color: textColor,
                         size: ResponsiveHelper.iconSize(context, 24),
                       ),
                     ),
@@ -206,17 +240,19 @@ class _LessonListScreenState extends State<LessonListScreen> {
                               horizontal: 24,
                             ),
                             decoration: BoxDecoration(
-                              color: ThemeHelper.getCardColor(context),
+                              color: cardColor,
                               borderRadius: BorderRadius.circular(
                                 ResponsiveHelper.borderRadius(context, 16),
                               ),
+                              border: Border.all(color: borderColor),
+                              boxShadow: ThemeHelper.getElevation(context, 4),
                             ),
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Icon(
                                   Icons.book_outlined,
-                                  color: ThemeHelper.getTextColor(context),
+                                  color: textColor,
                                   size: ResponsiveHelper.iconSize(context, 32),
                                 ),
                                 SizedBox(
@@ -230,7 +266,7 @@ class _LessonListScreenState extends State<LessonListScreen> {
                                       24,
                                     ),
                                     fontWeight: FontWeight.bold,
-                                    color: ThemeHelper.getTextColor(context),
+                                    color: textColor,
                                   ),
                                 ),
                               ],
@@ -248,10 +284,12 @@ class _LessonListScreenState extends State<LessonListScreen> {
                               horizontal: 24,
                             ),
                             decoration: BoxDecoration(
-                              color: ThemeHelper.getCardColor(context),
+                              color: elevatedColor,
                               borderRadius: BorderRadius.circular(
                                 ResponsiveHelper.borderRadius(context, 16),
                               ),
+                              border: Border.all(color: borderColor),
+                              boxShadow: ThemeHelper.getElevation(context, 3),
                             ),
                             child: Center(
                               child: Text(
@@ -262,7 +300,7 @@ class _LessonListScreenState extends State<LessonListScreen> {
                                     20,
                                   ),
                                   fontWeight: FontWeight.bold,
-                                  color: ThemeHelper.getTextColor(context),
+                                  color: textColor,
                                 ),
                               ),
                             ),
@@ -306,9 +344,7 @@ class _LessonListScreenState extends State<LessonListScreen> {
                                           20,
                                         ),
                                         fontWeight: FontWeight.bold,
-                                        color: ThemeHelper.getTextColor(
-                                          context,
-                                        ),
+                                        color: textColor,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
@@ -325,10 +361,7 @@ class _LessonListScreenState extends State<LessonListScreen> {
                                           context,
                                           16,
                                         ),
-                                        color:
-                                            ThemeHelper.getSecondaryTextColor(
-                                              context,
-                                            ),
+                                        color: secondaryTextColor,
                                       ),
                                       textAlign: TextAlign.center,
                                     ),
@@ -361,12 +394,9 @@ class _LessonListScreenState extends State<LessonListScreen> {
                   context,
                   all: ResponsiveHelper.contentPadding(context),
                 ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
+                decoration: BoxDecoration(
+                  gradient: ThemeHelper.getHeaderGradient(context),
+                  boxShadow: ThemeHelper.getElevation(context, 6),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -379,7 +409,7 @@ class _LessonListScreenState extends State<LessonListScreen> {
                         children: [
                           Icon(
                             Icons.home,
-                            color: Colors.white70,
+                            color: secondaryTextColor,
                             size: ResponsiveHelper.iconSize(context, 32),
                           ),
                           SizedBox(
@@ -388,7 +418,7 @@ class _LessonListScreenState extends State<LessonListScreen> {
                           Text(
                             'Home',
                             style: TextStyle(
-                              color: Colors.white70,
+                              color: secondaryTextColor,
                               fontSize: ResponsiveHelper.fontSize(context, 12),
                             ),
                           ),
@@ -400,14 +430,14 @@ class _LessonListScreenState extends State<LessonListScreen> {
                       children: [
                         Icon(
                           Icons.people,
-                          color: Colors.white,
+                          color: textColor,
                           size: ResponsiveHelper.iconSize(context, 32),
                         ),
                         SizedBox(height: ResponsiveHelper.spacing(context, 4)),
                         Text(
                           'Users',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: textColor,
                             fontSize: ResponsiveHelper.fontSize(context, 12),
                           ),
                         ),
@@ -428,6 +458,12 @@ class _LessonListScreenState extends State<LessonListScreen> {
     required String lessonTitle,
     required String lessonId,
   }) {
+    final textColor = ThemeHelper.getTextColor(context);
+    final cardColor = ThemeHelper.getCardColor(context);
+    final borderColor = ThemeHelper.getBorderColor(context);
+    final accentColor = ThemeHelper.getPrimaryGreen(context);
+    final isDark = ThemeHelper.isDarkMode(context);
+
     // Check if this lesson has a PDF
     final lessonData = _lessons.firstWhere(
       (lesson) => lesson['id'] == lessonId,
@@ -465,16 +501,12 @@ class _LessonListScreenState extends State<LessonListScreen> {
         margin: EdgeInsets.only(bottom: ResponsiveHelper.spacing(context, 12)),
         padding: ResponsiveHelper.cardPadding(context),
         decoration: BoxDecoration(
-          color: ThemeHelper.isDarkMode(context)
-              ? const Color(0xFF161B22)
-              : const Color(0xFFF0F8E6), // Light yellow-green
+          color: cardColor,
           borderRadius: BorderRadius.circular(
             ResponsiveHelper.borderRadius(context, 12),
           ),
-          border: Border.all(
-            color: ThemeHelper.getBorderColor(context),
-            width: 1,
-          ),
+          border: Border.all(color: borderColor, width: 1),
+          boxShadow: ThemeHelper.getElevation(context, 2),
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -485,7 +517,7 @@ class _LessonListScreenState extends State<LessonListScreen> {
                 style: TextStyle(
                   fontSize: ResponsiveHelper.fontSize(context, 16),
                   fontWeight: FontWeight.bold,
-                  color: ThemeHelper.getTextColor(context),
+                  color: textColor,
                 ),
               ),
             ),
@@ -496,10 +528,11 @@ class _LessonListScreenState extends State<LessonListScreen> {
                 vertical: 8,
               ),
               decoration: BoxDecoration(
-                color: const Color(0xFF6BBF59),
+                color: accentColor,
                 borderRadius: BorderRadius.circular(
                   ResponsiveHelper.borderRadius(context, 8),
                 ),
+                boxShadow: ThemeHelper.getElevation(context, 3),
               ),
               child: Row(
                 mainAxisSize: MainAxisSize.min,
@@ -509,7 +542,7 @@ class _LessonListScreenState extends State<LessonListScreen> {
                     style: TextStyle(
                       fontSize: ResponsiveHelper.fontSize(context, 13),
                       fontWeight: FontWeight.w600,
-                      color: Colors.white,
+                      color: isDark ? Colors.black : Colors.white,
                     ),
                   ),
                 ],

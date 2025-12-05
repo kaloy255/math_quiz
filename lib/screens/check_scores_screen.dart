@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../services/database_service.dart';
 import '../models/user_model.dart';
-import '../widgets/app_bar_widget.dart';
+import '../models/classroom_model.dart';
+import '../utils/theme_helper.dart';
+import '../utils/responsive_helper.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_card.dart';
 
 class CheckScoresScreen extends StatefulWidget {
   const CheckScoresScreen({super.key});
@@ -17,6 +21,8 @@ class _CheckScoresScreenState extends State<CheckScoresScreen> {
   int _selectedQuizNumber = 1;
   bool _loading = true;
   UserModel? _currentTeacher;
+  List<ClassroomModel> _classrooms = [];
+  String? _selectedClassroomCode;
 
   @override
   void initState() {
@@ -33,20 +39,44 @@ class _CheckScoresScreenState extends State<CheckScoresScreen> {
       return;
     }
 
-    _currentTeacher = user;
+    final teacherClassrooms = user.role == 'teacher'
+        ? DatabaseService.getClassroomsByTeacher(user.id)
+        : <ClassroomModel>[];
+    final classroomCodes = teacherClassrooms
+        .map((c) => c.classroomCode)
+        .toSet();
 
-    // Load students in teacher's classroom
+    String? activeClassroom = _selectedClassroomCode;
+    if (classroomCodes.isNotEmpty) {
+      if (activeClassroom == null ||
+          !classroomCodes.contains(activeClassroom)) {
+        activeClassroom = teacherClassrooms.first.classroomCode;
+      }
+    } else if (activeClassroom == null &&
+        user.classroomCode != null &&
+        user.classroomCode!.isNotEmpty) {
+      activeClassroom = user.classroomCode;
+    }
+
     final usersBox = DatabaseService.getUsersBox();
-    _students =
+    final students =
         usersBox.values
             .where(
               (u) =>
-                  u.role == 'student' && u.classroomCode == user.classroomCode,
+                  u.role == 'student' &&
+                  (activeClassroom != null && activeClassroom.isNotEmpty
+                      ? u.classroomCode == activeClassroom
+                      : user.classroomCode != null &&
+                            u.classroomCode == user.classroomCode),
             )
             .toList()
           ..sort((a, b) => a.name.compareTo(b.name));
 
     setState(() {
+      _currentTeacher = user;
+      _students = students;
+      _classrooms = teacherClassrooms;
+      _selectedClassroomCode = activeClassroom;
       _loading = false;
     });
   }
@@ -74,24 +104,9 @@ class _CheckScoresScreenState extends State<CheckScoresScreen> {
           {'id': '7', 'title': 'Linear Functions'},
         ];
       case 3:
-        return [
-          {'id': '1', 'title': 'Factoring Polynomials'},
-          {'id': '2', 'title': 'Quadratic Equations'},
-          {'id': '3', 'title': 'Solving Quadratics'},
-          {'id': '4', 'title': 'Quadratic Formula'},
-          {'id': '5', 'title': 'Systems of Equations'},
-          {'id': '6', 'title': 'Graphing Linear Inequalities'},
-        ];
+        return [];
       case 4:
-        return [
-          {'id': '1', 'title': 'Rational Expressions'},
-          {'id': '2', 'title': 'Radical Equations'},
-          {'id': '3', 'title': 'Exponential Functions'},
-          {'id': '4', 'title': 'Polynomial Operations'},
-          {'id': '5', 'title': 'Advanced Word Problems'},
-          {'id': '6', 'title': 'Function Notation'},
-          {'id': '7', 'title': 'Algebra Review'},
-        ];
+        return [];
       default:
         return [];
     }
@@ -152,10 +167,19 @@ class _CheckScoresScreenState extends State<CheckScoresScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = ThemeHelper.isDarkMode(context);
+
     if (_loading) {
       return Scaffold(
-        appBar: const MathQuestAppBar(showBackButton: true),
-        body: const Center(child: CircularProgressIndicator()),
+        backgroundColor: ThemeHelper.getContainerColor(context),
+        appBar: const CustomAppBar(showBackButton: true),
+        body: Center(
+          child: CircularProgressIndicator(
+            valueColor: AlwaysStoppedAnimation<Color>(
+              ThemeHelper.getPrimaryGreen(context),
+            ),
+          ),
+        ),
       );
     }
 
@@ -163,276 +187,502 @@ class _CheckScoresScreenState extends State<CheckScoresScreen> {
     final availableQuizzes = _getQuizzesForQuarter(quarterNum);
 
     return Scaffold(
-      appBar: const MathQuestAppBar(showBackButton: true),
+      backgroundColor: ThemeHelper.getContainerColor(context),
+      appBar: const CustomAppBar(showBackButton: true),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.grey[100]!, Colors.grey[50]!],
-          ),
+          gradient: ThemeHelper.getBackgroundGradient(context),
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Title
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFD4EDD0),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: const Text(
-                    'CHECK SCORES',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+            padding: ResponsiveHelper.padding(
+              context,
+              all: ResponsiveHelper.contentPadding(context),
+            ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: ResponsiveHelper.maxContentWidth(context),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title
+                  CustomCard(
+                    withGlow: isDark,
+                    child: Center(
+                      child: Text(
+                        'CHECK SCORES',
+                        style: TextStyle(
+                          fontSize: ResponsiveHelper.fontSize(context, 24),
+                          fontWeight: FontWeight.bold,
+                          color: ThemeHelper.getTextColor(context),
+                        ),
+                      ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 20),
+                  SizedBox(height: ResponsiveHelper.spacing(context, 20)),
 
-                // Quarter Selection
-                const Text(
-                  'QUARTER:',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                DropdownButton<String>(
-                  value: _selectedQuarter,
-                  isExpanded: true,
-                  items: const [
-                    DropdownMenuItem(
-                      value: '1st Quarter',
-                      child: Text('1st Quarter'),
-                    ),
-                    DropdownMenuItem(
-                      value: '2nd Quarter',
-                      child: Text('2nd Quarter'),
-                    ),
-                    DropdownMenuItem(
-                      value: '3rd Quarter',
-                      child: Text('3rd Quarter'),
-                    ),
-                    DropdownMenuItem(
-                      value: '4th Quarter',
-                      child: Text('4th Quarter'),
-                    ),
+                  if (_classrooms.isNotEmpty) ...[
+                    _buildClassroomFilter(context),
+                    SizedBox(height: ResponsiveHelper.spacing(context, 16)),
                   ],
-                  onChanged: (v) {
-                    if (v == null) return;
-                    setState(() {
-                      _selectedQuarter = v;
-                      _selectedQuizNumber =
-                          1; // Reset to quiz 1 when quarter changes
-                    });
-                  },
-                ),
-                const SizedBox(height: 16),
 
-                // Quiz Number Selection
-                const Text(
-                  'QUIZ NUMBER:',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black87,
-                  ),
-                ),
-                const SizedBox(height: 8),
-
-                // Quiz Number Tabs
-                SizedBox(
-                  height: 40,
-                  child: ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemCount: availableQuizzes.length,
-                    itemBuilder: (context, index) {
-                      final quizNum = index + 1;
-                      final isSelected = _selectedQuizNumber == quizNum;
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8.0),
-                        child: GestureDetector(
-                          onTap: () {
+                  // Quarter Selection
+                  CustomCard(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'QUARTER:',
+                          style: TextStyle(
+                            fontSize: ResponsiveHelper.fontSize(context, 14),
+                            fontWeight: FontWeight.bold,
+                            color: ThemeHelper.getTextColor(context),
+                          ),
+                        ),
+                        SizedBox(height: ResponsiveHelper.spacing(context, 8)),
+                        DropdownButton<String>(
+                          value: _selectedQuarter,
+                          isExpanded: true,
+                          dropdownColor: ThemeHelper.getCardColor(context),
+                          style: TextStyle(
+                            color: ThemeHelper.getTextColor(context),
+                            fontSize: ResponsiveHelper.fontSize(context, 14),
+                          ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: '1st Quarter',
+                              child: Text('1st Quarter'),
+                            ),
+                            DropdownMenuItem(
+                              value: '2nd Quarter',
+                              child: Text('2nd Quarter'),
+                            ),
+                            DropdownMenuItem(
+                              value: '3rd Quarter',
+                              child: Text('3rd Quarter'),
+                            ),
+                            DropdownMenuItem(
+                              value: '4th Quarter',
+                              child: Text('4th Quarter'),
+                            ),
+                          ],
+                          onChanged: (v) {
+                            if (v == null) return;
                             setState(() {
-                              _selectedQuizNumber = quizNum;
+                              _selectedQuarter = v;
+                              _selectedQuizNumber =
+                                  1; // Reset to quiz 1 when quarter changes
                             });
                           },
-                          child: Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 16,
-                              vertical: 8,
-                            ),
-                            decoration: BoxDecoration(
-                              color: isSelected
-                                  ? const Color(0xFF6BBF59)
-                                  : const Color(0xFFD4EDD0),
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: Text(
-                              '$quizNum',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.bold,
-                                color: isSelected
-                                    ? Colors.white
-                                    : Colors.black87,
-                              ),
-                            ),
-                          ),
                         ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 20),
-
-                // Grade & Section
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[200],
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.grey[400]!, width: 1),
-                  ),
-                  child: Text(
-                    'Grade & Section: ${_currentTeacher?.classroomCode ?? "N/A"}',
-                    style: const TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black87,
+                      ],
                     ),
                   ),
-                ),
-                const SizedBox(height: 16),
+                  SizedBox(height: ResponsiveHelper.spacing(context, 16)),
 
-                // Scores Table
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey[400]!, width: 1),
+                  // Quiz Number Selection
+                  Text(
+                    'QUIZ NUMBER:',
+                    style: TextStyle(
+                      fontSize: ResponsiveHelper.fontSize(context, 14),
+                      fontWeight: FontWeight.bold,
+                      color: ThemeHelper.getTextColor(context),
                     ),
-                    child: Column(
-                      children: [
-                        // Table Header
-                        Container(
-                          padding: const EdgeInsets.all(12),
-                          decoration: BoxDecoration(
-                            color: Colors.grey[200],
-                            borderRadius: const BorderRadius.only(
-                              topLeft: Radius.circular(8),
-                              topRight: Radius.circular(8),
-                            ),
-                          ),
-                          child: Row(
-                            children: const [
-                              Expanded(
-                                flex: 3,
-                                child: Text(
-                                  'NAME',
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                flex: 2,
-                                child: Text(
-                                  'SCORE',
-                                  textAlign: TextAlign.center,
-                                  style: TextStyle(
-                                    fontSize: 14,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.black87,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        // Table Body
-                        Expanded(
-                          child: ListView.builder(
-                            itemCount: _students.length,
-                            itemBuilder: (context, index) {
-                              final student = _students[index];
-                              final scoreData = _getFirstAttemptScore(
-                                student.id,
-                                _selectedQuizNumber,
-                              );
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(context, 8)),
 
-                              return Container(
-                                padding: const EdgeInsets.all(12),
-                                decoration: BoxDecoration(
-                                  border: Border(
-                                    bottom: BorderSide(
-                                      color: Colors.grey[300]!,
-                                      width: 1,
-                                    ),
-                                  ),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      flex: 3,
-                                      child: Text(
-                                        student.name,
-                                        style: const TextStyle(
-                                          fontSize: 14,
-                                          color: Colors.black87,
-                                        ),
-                                      ),
-                                    ),
-                                    Expanded(
-                                      flex: 2,
-                                      child: Text(
-                                        scoreData != null
-                                            ? '${scoreData['correctAnswers']}/${scoreData['totalQuestions']}'
-                                            : 'No attempt',
-                                        textAlign: TextAlign.center,
-                                        style: TextStyle(
-                                          fontSize: 14,
-                                          color: scoreData != null
-                                              ? (scoreData['score'] >= 70
-                                                    ? Colors.green[700]
-                                                    : Colors.red[700])
-                                              : Colors.grey[600],
-                                          fontWeight: scoreData != null
-                                              ? FontWeight.w600
-                                              : FontWeight.normal,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              );
+                  // Quiz Number Tabs
+                  SizedBox(
+                    height: ResponsiveHelper.height(context, 40),
+                    child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: availableQuizzes.length,
+                      itemBuilder: (context, index) {
+                        final quizNum = index + 1;
+                        final isSelected = _selectedQuizNumber == quizNum;
+                        return Padding(
+                          padding: EdgeInsets.only(
+                            right: ResponsiveHelper.spacing(context, 8),
+                          ),
+                          child: GestureDetector(
+                            onTap: () {
+                              setState(() {
+                                _selectedQuizNumber = quizNum;
+                              });
                             },
+                            child: Container(
+                              padding: ResponsiveHelper.padding(
+                                context,
+                                horizontal: 16,
+                                vertical: 8,
+                              ),
+                              decoration: BoxDecoration(
+                                color: isSelected
+                                    ? ThemeHelper.getButtonGreen(context)
+                                    : (isDark
+                                          ? ThemeHelper.getElevatedColor(
+                                              context,
+                                            )
+                                          : const Color(0xFFD4EDD0)),
+                                borderRadius: BorderRadius.circular(
+                                  ResponsiveHelper.borderRadius(context, 8),
+                                ),
+                                border: isSelected && isDark
+                                    ? Border.all(
+                                        color: ThemeHelper.getPrimaryGreen(
+                                          context,
+                                        ),
+                                        width: 2,
+                                      )
+                                    : null,
+                                boxShadow: isSelected && isDark
+                                    ? ThemeHelper.getGlow(
+                                        context,
+                                        color: ThemeHelper.getPrimaryGreen(
+                                          context,
+                                        ),
+                                        blur: 6,
+                                      )
+                                    : null,
+                              ),
+                              child: Text(
+                                '$quizNum',
+                                style: TextStyle(
+                                  fontSize: ResponsiveHelper.fontSize(
+                                    context,
+                                    14,
+                                  ),
+                                  fontWeight: FontWeight.bold,
+                                  color: isSelected
+                                      ? Colors.white
+                                      : ThemeHelper.getTextColor(context),
+                                ),
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(context, 20)),
+
+                  // Grade & Section
+                  CustomCard(
+                    child: Row(
+                      children: [
+                        Icon(
+                          Icons.class_,
+                          size: ResponsiveHelper.iconSize(context, 18),
+                          color: isDark
+                              ? ThemeHelper.getPrimaryGreen(context)
+                              : ThemeHelper.getButtonGreen(context),
+                        ),
+                        SizedBox(width: ResponsiveHelper.spacing(context, 8)),
+                        Expanded(
+                          child: Text(
+                            'Grade & Section: ${_activeClassroomLabel}',
+                            style: TextStyle(
+                              fontSize: ResponsiveHelper.fontSize(context, 14),
+                              fontWeight: FontWeight.w600,
+                              color: ThemeHelper.getTextColor(context),
+                            ),
                           ),
                         ),
                       ],
                     ),
                   ),
-                ),
-              ],
+                  SizedBox(height: ResponsiveHelper.spacing(context, 16)),
+
+                  // Scores Table
+                  Expanded(
+                    child: CustomCard(
+                      withGlow: isDark,
+                      child: Column(
+                        children: [
+                          // Table Header
+                          Container(
+                            padding: ResponsiveHelper.padding(context, all: 12),
+                            decoration: BoxDecoration(
+                              color: isDark
+                                  ? ThemeHelper.getElevatedColor(context)
+                                  : Colors.grey[200],
+                              borderRadius: BorderRadius.only(
+                                topLeft: Radius.circular(
+                                  ResponsiveHelper.borderRadius(context, 8),
+                                ),
+                                topRight: Radius.circular(
+                                  ResponsiveHelper.borderRadius(context, 8),
+                                ),
+                              ),
+                              border: isDark
+                                  ? Border(
+                                      bottom: BorderSide(
+                                        color: ThemeHelper.getDividerColor(
+                                          context,
+                                        ),
+                                        width: 1,
+                                      ),
+                                    )
+                                  : null,
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  flex: ResponsiveHelper.isSmallMobile(context)
+                                      ? 2
+                                      : 3,
+                                  child: Text(
+                                    'NAME',
+                                    style: TextStyle(
+                                      fontSize: ResponsiveHelper.fontSize(
+                                        context,
+                                        14,
+                                      ),
+                                      fontWeight: FontWeight.bold,
+                                      color: ThemeHelper.getTextColor(context),
+                                    ),
+                                  ),
+                                ),
+                                Expanded(
+                                  flex: ResponsiveHelper.isSmallMobile(context)
+                                      ? 1
+                                      : 2,
+                                  child: Text(
+                                    'SCORE',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      fontSize: ResponsiveHelper.fontSize(
+                                        context,
+                                        14,
+                                      ),
+                                      fontWeight: FontWeight.bold,
+                                      color: ThemeHelper.getTextColor(context),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          // Table Body
+                          Expanded(
+                            child: ListView.builder(
+                              itemCount: _students.length,
+                              itemBuilder: (context, index) {
+                                final student = _students[index];
+                                final scoreData = _getFirstAttemptScore(
+                                  student.id,
+                                  _selectedQuizNumber,
+                                );
+                                final isEvenRow = index.isEven;
+
+                                return Container(
+                                  padding: ResponsiveHelper.padding(
+                                    context,
+                                    all: 12,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isEvenRow
+                                        ? (isDark
+                                              ? ThemeHelper.getElevatedColor(
+                                                  context,
+                                                ).withOpacity(0.3)
+                                              : const Color(0xFFF8FBF7))
+                                        : (isDark
+                                              ? ThemeHelper.getCardColor(
+                                                  context,
+                                                )
+                                              : Colors.white),
+                                    border: Border(
+                                      bottom: BorderSide(
+                                        color: isDark
+                                            ? ThemeHelper.getDividerColor(
+                                                context,
+                                              )
+                                            : Colors.grey[300]!,
+                                        width: 1,
+                                      ),
+                                    ),
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex:
+                                            ResponsiveHelper.isSmallMobile(
+                                              context,
+                                            )
+                                            ? 2
+                                            : 3,
+                                        child: Text(
+                                          student.name,
+                                          style: TextStyle(
+                                            fontSize: ResponsiveHelper.fontSize(
+                                              context,
+                                              14,
+                                            ),
+                                            color: ThemeHelper.getTextColor(
+                                              context,
+                                            ),
+                                          ),
+                                          maxLines: 2,
+                                          overflow: TextOverflow.ellipsis,
+                                        ),
+                                      ),
+                                      Expanded(
+                                        flex:
+                                            ResponsiveHelper.isSmallMobile(
+                                              context,
+                                            )
+                                            ? 1
+                                            : 2,
+                                        child: Text(
+                                          scoreData != null
+                                              ? '${scoreData['correctAnswers']}/${scoreData['totalQuestions']}'
+                                              : 'No attempt',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: ResponsiveHelper.fontSize(
+                                              context,
+                                              14,
+                                            ),
+                                            color: scoreData != null
+                                                ? (scoreData['score'] >= 70
+                                                      ? ThemeHelper.getButtonGreen(
+                                                          context,
+                                                        )
+                                                      : ThemeHelper.getErrorColor(
+                                                          context,
+                                                        ))
+                                                : ThemeHelper.getSecondaryTextColor(
+                                                    context,
+                                                  ),
+                                            fontWeight: scoreData != null
+                                                ? FontWeight.w600
+                                                : FontWeight.normal,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  Widget _buildClassroomFilter(BuildContext context) {
+    final isDark = ThemeHelper.isDarkMode(context);
+    final textColor = ThemeHelper.getTextColor(context);
+
+    return CustomCard(
+      withGlow: isDark,
+      child: Padding(
+        padding: ResponsiveHelper.padding(
+          context,
+          horizontal: ResponsiveHelper.spacing(context, 16),
+          vertical: ResponsiveHelper.spacing(context, 12),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.filter_list,
+              color: ThemeHelper.getPrimaryGreen(context),
+              size: ResponsiveHelper.iconSize(context, 20),
+            ),
+            SizedBox(width: ResponsiveHelper.spacing(context, 12)),
+            Expanded(
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _selectedClassroomCode,
+                  isExpanded: true,
+                  dropdownColor: ThemeHelper.getCardColor(context),
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: ThemeHelper.getPrimaryGreen(context),
+                  ),
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: ResponsiveHelper.fontSize(context, 14),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  hint: Text(
+                    'Select classroom',
+                    style: TextStyle(
+                      color: ThemeHelper.getSecondaryTextColor(context),
+                      fontSize: ResponsiveHelper.fontSize(context, 14),
+                    ),
+                  ),
+                  items: _classrooms.map((classroom) {
+                    return DropdownMenuItem<String>(
+                      value: classroom.classroomCode,
+                      child: Text(_formatClassroomOption(classroom)),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() {
+                      _selectedClassroomCode = value;
+                      _loading = true;
+                    });
+                    _loadData();
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatClassroomOption(ClassroomModel classroom) {
+    final section = classroom.gradeAndSection?.trim();
+    final label = (section != null && section.isNotEmpty)
+        ? section
+        : (classroom.classroomName.isNotEmpty
+              ? classroom.classroomName
+              : classroom.classroomCode);
+    return '$label (${classroom.classroomCode})';
+  }
+
+  String get _activeClassroomLabel {
+    final match = _getSelectedClassroom();
+    if (match != null) {
+      if (match.gradeAndSection != null &&
+          match.gradeAndSection!.trim().isNotEmpty) {
+        return match.gradeAndSection!;
+      }
+      if (match.classroomName.isNotEmpty) {
+        return match.classroomName;
+      }
+      return match.classroomCode;
+    }
+
+    if (_currentTeacher?.classroomName?.isNotEmpty == true) {
+      return _currentTeacher!.classroomName!;
+    }
+
+    return _currentTeacher?.classroomCode ?? 'N/A';
+  }
+
+  ClassroomModel? _getSelectedClassroom() {
+    if (_selectedClassroomCode == null) return null;
+    for (final classroom in _classrooms) {
+      if (classroom.classroomCode == _selectedClassroomCode) {
+        return classroom;
+      }
+    }
+    return null;
   }
 }

@@ -73,6 +73,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/app_logo.png
+    - assets/loading-screen.png
     - assets/images/badges/Rookie.png
     - assets/images/badges/Learner.png
     - assets/images/badges/Explorer.png
@@ -83,6 +84,7 @@ flutter:
     - assets/images/badges/Math_Wizard.png
     - assets/images/mathie/dashboard_mathie.png
     - assets/images/mathie/bubble_chat.png
+    - assets/images/mathie/bubble_green.png
     - assets/images/mathie/badge_mathie.png
     - assets/images/mathie/quiz_list_mathie.png
     - assets/lessons/Quarter_1/M1_Q1 MATH.pdf

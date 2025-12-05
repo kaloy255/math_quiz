@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../services/database_service.dart';
 import '../models/user_model.dart';
+import '../models/classroom_model.dart';
+import '../utils/theme_helper.dart';
+import '../utils/responsive_helper.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_card.dart';
 
 class StudentPerformanceScreen extends StatefulWidget {
   const StudentPerformanceScreen({super.key});
@@ -14,6 +19,8 @@ class StudentPerformanceScreen extends StatefulWidget {
 
 class _StudentPerformanceScreenState extends State<StudentPerformanceScreen> {
   List<UserModel> _students = [];
+  List<ClassroomModel> _classrooms = [];
+  String? _selectedClassroomCode;
   String _selectedQuarter = '1st Quarter';
   bool _loading = true;
 
@@ -31,19 +38,38 @@ class _StudentPerformanceScreenState extends State<StudentPerformanceScreen> {
       });
       return;
     }
+    final teacherClassrooms = user.role == 'teacher'
+        ? DatabaseService.getClassroomsByTeacher(user.id)
+        : <ClassroomModel>[];
+    final classroomCodes = teacherClassrooms
+        .map((c) => c.classroomCode)
+        .toSet();
 
-    // Load students in teacher's classroom
+    String? activeClassroom = _selectedClassroomCode;
+    if (classroomCodes.isNotEmpty) {
+      if (activeClassroom == null ||
+          !classroomCodes.contains(activeClassroom)) {
+        activeClassroom = teacherClassrooms.first.classroomCode;
+      }
+    } else if (activeClassroom == null &&
+        user.classroomCode != null &&
+        user.classroomCode!.isNotEmpty) {
+      activeClassroom = user.classroomCode;
+    }
+
+    // Load students in the selected or default classroom
     final usersBox = DatabaseService.getUsersBox();
-    _students = usersBox.values
-        .where(
-          (u) => u.role == 'student' && u.classroomCode == user.classroomCode,
-        )
-        .toList();
-
-    // Build quizId list for the initial quarter (from attempts, for has-data check)
-    // (No need to store in a variable since we get it dynamically now)
+    final students = usersBox.values.where((u) {
+      if (u.role != 'student') return false;
+      final codeToMatch = activeClassroom ?? user.classroomCode;
+      if (codeToMatch == null || codeToMatch.isEmpty) return false;
+      return u.classroomCode == codeToMatch;
+    }).toList();
 
     setState(() {
+      _students = students;
+      _classrooms = teacherClassrooms;
+      _selectedClassroomCode = activeClassroom;
       _loading = false;
     });
   }
@@ -71,24 +97,9 @@ class _StudentPerformanceScreenState extends State<StudentPerformanceScreen> {
           {'id': '7', 'title': 'Linear Functions'},
         ];
       case 3:
-        return [
-          {'id': '1', 'title': 'Factoring Polynomials'},
-          {'id': '2', 'title': 'Quadratic Equations'},
-          {'id': '3', 'title': 'Solving Quadratics'},
-          {'id': '4', 'title': 'Quadratic Formula'},
-          {'id': '5', 'title': 'Systems of Equations'},
-          {'id': '6', 'title': 'Graphing Linear Inequalities'},
-        ];
+        return [];
       case 4:
-        return [
-          {'id': '1', 'title': 'Rational Expressions'},
-          {'id': '2', 'title': 'Radical Equations'},
-          {'id': '3', 'title': 'Exponential Functions'},
-          {'id': '4', 'title': 'Polynomial Operations'},
-          {'id': '5', 'title': 'Advanced Word Problems'},
-          {'id': '6', 'title': 'Function Notation'},
-          {'id': '7', 'title': 'Algebra Review'},
-        ];
+        return [];
       default:
         return [];
     }
@@ -179,112 +190,106 @@ class _StudentPerformanceScreenState extends State<StudentPerformanceScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = ThemeHelper.isDarkMode(context);
+
     return Scaffold(
+      backgroundColor: ThemeHelper.getContainerColor(context),
+      appBar: const CustomAppBar(showBackButton: true),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.grey[100]!, Colors.grey[50]!],
-          ),
+          gradient: ThemeHelper.getBackgroundGradient(context),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Header
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
+              if (_loading)
+                Expanded(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      valueColor: AlwaysStoppedAnimation<Color>(
+                        ThemeHelper.getPrimaryGreen(context),
                     ),
-                    const SizedBox(width: 8),
-                    Container(
-                      width: 36,
-                      height: 36,
-                      decoration: const BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(8)),
-                      ),
-                      child: const Center(
-                        child: Text(
-                          'M',
-                          style: TextStyle(
-                            color: Color(0xFF6BBF59),
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    const Text(
-                      'MathQuest',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
                 ),
               ),
-
-              if (_loading)
-                const Expanded(
-                  child: Center(child: CircularProgressIndicator()),
                 )
               else
                 Expanded(
                   child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(20),
+                    padding: ResponsiveHelper.padding(
+                      context,
+                      all: ResponsiveHelper.contentPadding(context),
+                    ),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        maxWidth: ResponsiveHelper.maxContentWidth(context),
+                      ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        // Title chip
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFD4EDD0),
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: const Center(
+                          // Title card
+                          CustomCard(
+                            withGlow: isDark,
+                            child: Center(
                             child: Text(
                               "STUDENT'S PERFORMANCE",
                               style: TextStyle(
-                                fontSize: 16,
+                                  fontSize: ResponsiveHelper.fontSize(
+                                    context,
+                                    16,
+                                  ),
                                 fontWeight: FontWeight.w800,
                                 letterSpacing: 0.5,
-                                color: Colors.black87,
+                                  color: ThemeHelper.getTextColor(context),
+                                ),
                               ),
                             ),
                           ),
+                          SizedBox(
+                            height: ResponsiveHelper.spacing(context, 16),
                         ),
-                        const SizedBox(height: 16),
 
-                        // Quarter selector
-                        Row(
+                          if (_classrooms.isNotEmpty)
+                            Column(
                           children: [
-                            const Text(
-                              'Quarter:',
-                              style: TextStyle(fontWeight: FontWeight.w600),
+                                _buildClassroomFilter(context),
+                                SizedBox(
+                                  height: ResponsiveHelper.spacing(context, 12),
+                                ),
+                              ],
                             ),
-                            const SizedBox(width: 8),
-                            DropdownButton<String>(
+
+                          // Quarter selector
+                          CustomCard(
+                            child: Row(
+                              children: [
+                                Text(
+                              'Quarter:',
+                                  style: TextStyle(
+                                    fontSize: ResponsiveHelper.fontSize(
+                                      context,
+                                      14,
+                                    ),
+                                    fontWeight: FontWeight.w600,
+                                    color: ThemeHelper.getTextColor(context),
+                                  ),
+                                ),
+                                SizedBox(
+                                  width: ResponsiveHelper.spacing(context, 8),
+                                ),
+                                Expanded(
+                                  child: DropdownButton<String>(
                               value: _selectedQuarter,
+                                    isExpanded: true,
+                                    dropdownColor: ThemeHelper.getCardColor(
+                                      context,
+                                    ),
+                                    style: TextStyle(
+                                      color: ThemeHelper.getTextColor(context),
+                                      fontSize: ResponsiveHelper.fontSize(
+                                        context,
+                                        14,
+                                      ),
+                                    ),
                               items: const [
                                 DropdownMenuItem(
                                   value: '1st Quarter',
@@ -309,14 +314,19 @@ class _StudentPerformanceScreenState extends State<StudentPerformanceScreen> {
                                   _selectedQuarter = v;
                                 });
                               },
+                                  ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                          ),
+                          SizedBox(
+                            height: ResponsiveHelper.spacing(context, 12),
+                          ),
 
                         // Always render charts for all quizzes in this quarter
                         ..._buildAllChartsForQuarter(),
                       ],
+                      ),
                     ),
                   ),
                 ),
@@ -327,8 +337,85 @@ class _StudentPerformanceScreenState extends State<StudentPerformanceScreen> {
     );
   }
 
+  Widget _buildClassroomFilter(BuildContext context) {
+    final isDark = ThemeHelper.isDarkMode(context);
+    final textColor = ThemeHelper.getTextColor(context);
+
+    return CustomCard(
+      withGlow: isDark,
+      child: Padding(
+        padding: ResponsiveHelper.padding(
+          context,
+          horizontal: ResponsiveHelper.spacing(context, 16),
+          vertical: ResponsiveHelper.spacing(context, 12),
+        ),
+        child: Row(
+          children: [
+            Icon(
+              Icons.filter_list,
+              color: ThemeHelper.getPrimaryGreen(context),
+              size: ResponsiveHelper.iconSize(context, 20),
+            ),
+            SizedBox(width: ResponsiveHelper.spacing(context, 12)),
+            Expanded(
+              child: DropdownButtonHideUnderline(
+                child: DropdownButton<String>(
+                  value: _selectedClassroomCode,
+                  isExpanded: true,
+                  dropdownColor: ThemeHelper.getCardColor(context),
+                  icon: Icon(
+                    Icons.arrow_drop_down,
+                    color: ThemeHelper.getPrimaryGreen(context),
+                  ),
+                  style: TextStyle(
+                    color: textColor,
+                    fontSize: ResponsiveHelper.fontSize(context, 14),
+                    fontWeight: FontWeight.w600,
+                  ),
+                  hint: Text(
+                    'Select classroom',
+                    style: TextStyle(
+                      color: ThemeHelper.getSecondaryTextColor(context),
+                      fontSize: ResponsiveHelper.fontSize(context, 14),
+                    ),
+                  ),
+                  items: _classrooms.map((classroom) {
+                    return DropdownMenuItem<String>(
+                      value: classroom.classroomCode,
+                      child: Text(_formatClassroomOption(classroom)),
+                    );
+                  }).toList(),
+                  onChanged: (value) {
+                    if (value == null) return;
+                    setState(() {
+                      _selectedClassroomCode = value;
+                      _loading = true;
+                    });
+                    _loadData();
+                  },
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  String _formatClassroomOption(ClassroomModel classroom) {
+    final section = classroom.gradeAndSection?.trim();
+    final label = (section != null && section.isNotEmpty)
+        ? section
+        : (classroom.classroomName.isNotEmpty
+              ? classroom.classroomName
+              : classroom.classroomCode);
+    return '$label (${classroom.classroomCode})';
+  }
+
   List<Widget> _buildAllChartsForQuarter() {
+    final isDark = ThemeHelper.isDarkMode(context);
     final quizIds = _getAllQuizIdsForQuarter(_selectedQuarter);
+
     return List<Widget>.generate(quizIds.length, (index) {
       final quizId = quizIds[index];
       final stats = _computePassFail(_selectedQuarter, quizId);
@@ -338,93 +425,134 @@ class _StudentPerformanceScreenState extends State<StudentPerformanceScreen> {
       final failedPct = stats['failedPct'] as double;
       final hasData = (passed + failed) > 0;
 
+      // Theme-aware colors
+      final passedColor = isDark
+          ? ThemeHelper.getButtonGreen(context)
+          : Colors.cyan;
+      final failedColor = ThemeHelper.getErrorColor(context);
+
       return Container(
-        margin: const EdgeInsets.only(bottom: 16),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF5F5DC),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey[300]!, width: 1),
-        ),
+        margin: EdgeInsets.only(bottom: ResponsiveHelper.spacing(context, 16)),
+        child: CustomCard(
+          withGlow: isDark,
         child: Column(
           children: [
             // Legend
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
-              children: const [
-                _LegendDot(color: Colors.red, label: 'FAILED'),
-                SizedBox(width: 16),
-                _LegendDot(color: Colors.cyan, label: 'PASSED'),
+                children: [
+                  _LegendDot(color: failedColor, label: 'FAILED'),
+                  SizedBox(
+                    width: ResponsiveHelper.isSmallMobile(context)
+                        ? ResponsiveHelper.spacing(context, 8)
+                        : ResponsiveHelper.spacing(context, 16),
+                  ),
+                  _LegendDot(color: passedColor, label: 'PASSED'),
               ],
             ),
-            const SizedBox(height: 12),
+              SizedBox(height: ResponsiveHelper.spacing(context, 12)),
             SizedBox(
-              height: 220,
+                height: ResponsiveHelper.isSmallMobile(context)
+                    ? ResponsiveHelper.height(context, 180)
+                    : ResponsiveHelper.height(context, 220),
               child: _PieChart(
                 passedFraction: (passed + failed) == 0
                     ? 0.0
                     : passed / (passed + failed),
-                passedColor: Colors.cyan,
-                failedColor: Colors.red,
+                  passedColor: passedColor,
+                  failedColor: failedColor,
                 hasData: hasData,
+                  noDataColor: isDark
+                      ? ThemeHelper.getDividerColor(context)
+                      : const Color(0xFFE0E0E0),
+                  noDataInnerColor: isDark
+                      ? ThemeHelper.getCardColor(context)
+                      : Colors.white,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
+              SizedBox(height: ResponsiveHelper.spacing(context, 8)),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 24),
+                padding: ResponsiveHelper.padding(
+                  context,
+                  horizontal: ResponsiveHelper.isSmallMobile(context) ? 12 : 24,
+                ),
               child: Row(
                 children: [
                   Expanded(
                     child: Text(
                       'PASSED ${passedPct.toStringAsFixed(1)}%',
-                      style: const TextStyle(
-                        fontSize: 12,
+                        style: TextStyle(
+                          fontSize: ResponsiveHelper.fontSize(context, 12),
                         fontWeight: FontWeight.w600,
+                          color: ThemeHelper.getTextColor(context),
                       ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                     ),
                   ),
                   Expanded(
                     child: Text(
                       'FAILED ${failedPct.toStringAsFixed(1)}%',
                       textAlign: TextAlign.right,
-                      style: const TextStyle(
-                        fontSize: 12,
+                        style: TextStyle(
+                          fontSize: ResponsiveHelper.fontSize(context, 12),
                         fontWeight: FontWeight.w600,
+                          color: ThemeHelper.getTextColor(context),
                       ),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                     ),
                   ),
                 ],
               ),
             ),
-            const SizedBox(height: 8),
+              SizedBox(height: ResponsiveHelper.spacing(context, 8)),
             Text(
               'QUIZ ${index + 1}',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  fontSize: ResponsiveHelper.fontSize(context, 16),
+                  fontWeight: FontWeight.w700,
+                  color: ThemeHelper.getTextColor(context),
+                ),
             ),
           ],
+          ),
         ),
       );
     });
   }
-
-  // Deprecated single-card builder removed
 }
 
 class _LegendDot extends StatelessWidget {
   final Color color;
   final String label;
   const _LegendDot({required this.color, required this.label});
+
   @override
   Widget build(BuildContext context) {
+    final isDark = ThemeHelper.isDarkMode(context);
+
     return Row(
       children: [
         Container(
-          width: 10,
-          height: 10,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          width: ResponsiveHelper.width(context, 10),
+          height: ResponsiveHelper.height(context, 10),
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+            boxShadow: isDark
+                ? ThemeHelper.getGlow(context, color: color, blur: 4)
+                : null,
+          ),
         ),
-        const SizedBox(width: 6),
-        Text(label, style: const TextStyle(fontSize: 12)),
+        SizedBox(width: ResponsiveHelper.spacing(context, 6)),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: ResponsiveHelper.fontSize(context, 12),
+            color: ThemeHelper.getTextColor(context),
+          ),
+        ),
       ],
     );
   }
@@ -435,12 +563,18 @@ class _PieChart extends StatelessWidget {
   final Color passedColor;
   final Color failedColor;
   final bool hasData;
+  final Color noDataColor;
+  final Color noDataInnerColor;
+
   const _PieChart({
     required this.passedFraction,
     required this.passedColor,
     required this.failedColor,
     required this.hasData,
+    required this.noDataColor,
+    required this.noDataInnerColor,
   });
+
   @override
   Widget build(BuildContext context) {
     return CustomPaint(
@@ -449,6 +583,8 @@ class _PieChart extends StatelessWidget {
         passedColor: passedColor,
         failedColor: failedColor,
         hasData: hasData,
+        noDataColor: noDataColor,
+        noDataInnerColor: noDataInnerColor,
       ),
       child: Container(),
     );
@@ -460,12 +596,18 @@ class _PiePainter extends CustomPainter {
   final Color passedColor;
   final Color failedColor;
   final bool hasData;
+  final Color noDataColor;
+  final Color noDataInnerColor;
+
   _PiePainter({
     required this.passedFraction,
     required this.passedColor,
     required this.failedColor,
     required this.hasData,
+    required this.noDataColor,
+    required this.noDataInnerColor,
   });
+
   @override
   void paint(Canvas canvas, Size size) {
     final radius = math.min(size.width, size.height) / 2 - 8;
@@ -474,9 +616,9 @@ class _PiePainter extends CustomPainter {
 
     if (!hasData) {
       // Draw an empty placeholder doughnut to indicate no data yet
-      paint.color = const Color(0xFFE0E0E0);
+      paint.color = noDataColor;
       canvas.drawCircle(center, radius, paint);
-      final innerPaint = Paint()..color = Colors.white;
+      final innerPaint = Paint()..color = noDataInnerColor;
       canvas.drawCircle(center, radius - 14, innerPaint);
       return;
     }

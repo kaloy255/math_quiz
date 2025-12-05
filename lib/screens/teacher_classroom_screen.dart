@@ -3,6 +3,11 @@ import 'package:flutter/services.dart';
 import '../services/database_service.dart';
 import '../models/user_model.dart';
 import '../models/classroom_model.dart';
+import '../utils/theme_helper.dart';
+import '../utils/responsive_helper.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_card.dart';
+import '../widgets/custom_button.dart';
 
 class TeacherClassroomScreen extends StatefulWidget {
   const TeacherClassroomScreen({super.key});
@@ -68,115 +73,43 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = ThemeHelper.isDarkMode(context);
+
     return Scaffold(
+      backgroundColor: ThemeHelper.getContainerColor(context),
+      appBar: const CustomAppBar(
+        showBackButton: true,
+        title: 'Classroom Management',
+      ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.grey[100]!, Colors.grey[50]!],
-          ),
+          gradient: ThemeHelper.getBackgroundGradient(context),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Top Header
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    // Back Button
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    // Logo and Title
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(8),
-                              ),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'M',
-                                style: TextStyle(
-                                  color: Color(0xFF6BBF59),
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          const Text(
-                            'MathQuest',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Profile Icon (decorative)
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.people,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               // Classroom List Title
-              Container(
-                margin: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
+              Padding(
+                padding: ResponsiveHelper.padding(
+                  context,
+                  horizontal: ResponsiveHelper.contentPadding(context),
+                  vertical: ResponsiveHelper.spacing(context, 12),
                 ),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFD4EDD0),
-                    borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.black87, width: 1),
-                  ),
-                  child: const Text(
-                    'Classroom List',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                child: CustomCard(
+                  withGlow: isDark,
+                  child: Padding(
+                    padding: ResponsiveHelper.padding(
+                      context,
+                      horizontal: ResponsiveHelper.spacing(context, 24),
+                      vertical: ResponsiveHelper.spacing(context, 12),
+                            ),
+                              child: Text(
+                      'Classroom List',
+                                style: TextStyle(
+                        fontSize: ResponsiveHelper.fontSize(context, 18),
+                                  fontWeight: FontWeight.bold,
+                        color: ThemeHelper.getTextColor(context),
+                      ),
                     ),
                   ),
                 ),
@@ -184,120 +117,77 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
 
               // Create Button (below header, right aligned)
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
+                padding: ResponsiveHelper.padding(
+                  context,
+                  horizontal: ResponsiveHelper.contentPadding(context),
+                ),
                 child: Align(
                   alignment: Alignment.centerRight,
-                  child: Material(
-                    borderRadius: BorderRadius.circular(30),
-                    elevation: 3,
-                    shadowColor: const Color(0xFF6BBF59).withOpacity(0.3),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        gradient: const LinearGradient(
-                          begin: Alignment.topLeft,
-                          end: Alignment.bottomRight,
-                          colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                        ),
-                        borderRadius: BorderRadius.circular(30),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0xFF6BBF59).withOpacity(0.3),
-                            blurRadius: 8,
-                            offset: const Offset(0, 4),
-                          ),
-                        ],
-                      ),
-                      child: ElevatedButton.icon(
+                  child: PrimaryButton(
+                    text: 'CLASSROOM',
+                    icon: Icons.add_circle_outline,
                         onPressed: () => _showCreateClassroomDialog(),
-                        icon: const Icon(
-                          Icons.add_circle_outline,
-                          color: Colors.white,
-                          size: 22,
-                        ),
-                        label: const Text(
-                          'CLASSROOM',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                            letterSpacing: 0.5,
-                          ),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.transparent,
-                          foregroundColor: Colors.white,
-                          shadowColor: Colors.transparent,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
-                          ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 14,
-                          ),
-                        ),
-                      ),
-                    ),
                   ),
                 ),
               ),
-              const SizedBox(height: 8),
+              SizedBox(height: ResponsiveHelper.spacing(context, 8)),
 
               // Filter Dropdown
               if (!_isLoading && _classrooms.isNotEmpty)
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 8,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: const Color(0xFF6BBF59),
-                        width: 2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: const Color(0xFF6BBF59).withOpacity(0.1),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
+                  padding: ResponsiveHelper.padding(
+                    context,
+                    horizontal: ResponsiveHelper.contentPadding(context),
+                  ),
+                  child: CustomCard(
+                    withGlow: isDark,
+                    child: Padding(
+                      padding: ResponsiveHelper.padding(
+                        context,
+                        horizontal: ResponsiveHelper.spacing(context, 16),
+                        vertical: ResponsiveHelper.spacing(context, 8),
                     ),
                     child: Row(
                       children: [
-                        const Icon(
+                          Icon(
                           Icons.filter_list,
-                          color: Color(0xFF6BBF59),
-                          size: 20,
+                            color: ThemeHelper.getPrimaryGreen(context),
+                            size: ResponsiveHelper.iconSize(context, 20),
                         ),
-                        const SizedBox(width: 12),
-                        const Text(
+                          SizedBox(
+                            width: ResponsiveHelper.spacing(context, 12),
+                          ),
+                          Text(
                           'Filter Classroom:',
                           style: TextStyle(
-                            fontSize: 14,
+                              fontSize: ResponsiveHelper.fontSize(context, 14),
                             fontWeight: FontWeight.w600,
-                            color: Colors.black87,
+                              color: ThemeHelper.getTextColor(context),
+                            ),
                           ),
+                          SizedBox(
+                            width: ResponsiveHelper.spacing(context, 12),
                         ),
-                        const SizedBox(width: 12),
                         Expanded(
                           child: DropdownButtonHideUnderline(
                             child: DropdownButton<ClassroomModel>(
                               value: _selectedClassroom,
                               isExpanded: true,
-                              icon: const Icon(
+                                icon: Icon(
                                 Icons.arrow_drop_down,
-                                color: Color(0xFF6BBF59),
+                                  color: ThemeHelper.getPrimaryGreen(context),
                               ),
-                              style: const TextStyle(
-                                fontSize: 14,
-                                color: Colors.black87,
+                                style: TextStyle(
+                                  fontSize: ResponsiveHelper.fontSize(
+                                    context,
+                                    14,
+                                  ),
+                                  color: ThemeHelper.getTextColor(context),
                                 fontWeight: FontWeight.w500,
                               ),
+                                dropdownColor: isDark
+                                    ? ThemeHelper.getCardColor(context)
+                                    : Colors.white,
                               items: _classrooms.map((classroom) {
                                 // Get student count from pre-calculated map
                                 final studentCount =
@@ -330,124 +220,209 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
                           ),
                         ),
                       ],
+                      ),
                     ),
                   ),
                 ),
               if (!_isLoading && _classrooms.isNotEmpty)
-                const SizedBox(height: 12),
+                SizedBox(height: ResponsiveHelper.spacing(context, 12)),
 
               // Main Content Area
               Expanded(
-                child: Container(
-                  width: double.infinity,
-                  margin: const EdgeInsets.symmetric(horizontal: 16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF5F5DC),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.grey[300]!, width: 1),
+                child: Padding(
+                  padding: ResponsiveHelper.padding(
+                    context,
+                    horizontal: ResponsiveHelper.contentPadding(context),
                   ),
+                  child: CustomCard(
+                    withGlow: isDark,
                   child: _isLoading
-                      ? const Center(child: CircularProgressIndicator())
+                        ? Center(
+                            child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(
+                                ThemeHelper.getPrimaryGreen(context),
+                              ),
+                            ),
+                          )
                       : SingleChildScrollView(
-                          padding: const EdgeInsets.all(20),
+                            padding: ResponsiveHelper.padding(
+                              context,
+                              all: ResponsiveHelper.spacing(context, 20),
+                            ),
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Grade & Section
-                              const Text(
+                                Text(
                                 'Grade & Section:',
                                 style: TextStyle(
-                                  fontSize: 14,
+                                    fontSize: ResponsiveHelper.fontSize(
+                                      context,
+                                      14,
+                                    ),
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
+                                    color: ThemeHelper.getTextColor(context),
+                                  ),
                                 ),
+                                SizedBox(
+                                  height: ResponsiveHelper.spacing(context, 4),
                               ),
                               Text(
                                 _selectedClassroom?.gradeAndSection ?? 'N/A',
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Colors.black87,
+                                  style: TextStyle(
+                                    fontSize: ResponsiveHelper.fontSize(
+                                      context,
+                                      14,
+                                    ),
+                                    color: ThemeHelper.getSecondaryTextColor(
+                                      context,
+                                    ),
                                 ),
                               ),
-                              const SizedBox(height: 16),
+                                SizedBox(
+                                  height: ResponsiveHelper.spacing(context, 16),
+                                ),
 
                               // Table Header
                               Container(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 16,
-                                  vertical: 12,
+                                  padding: ResponsiveHelper.padding(
+                                    context,
+                                    horizontal: ResponsiveHelper.spacing(
+                                      context,
+                                      16,
+                                    ),
+                                    vertical: ResponsiveHelper.spacing(
+                                      context,
+                                      12,
+                                    ),
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[200],
-                                  borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.grey[300]!),
+                                    color: isDark
+                                        ? ThemeHelper.getElevatedColor(context)
+                                        : Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(
+                                      ResponsiveHelper.borderRadius(context, 8),
+                                    ),
+                                    border: Border.all(
+                                      color: isDark
+                                          ? ThemeHelper.getBorderColor(context)
+                                          : Colors.grey[300]!,
+                                    ),
+                                    boxShadow: isDark
+                                        ? ThemeHelper.getGlow(
+                                            context,
+                                            color: ThemeHelper.getPrimaryGreen(
+                                              context,
+                                            ),
+                                            blur: 4,
+                                          )
+                                        : null,
                                 ),
                                 child: Row(
                                   children: [
                                     Expanded(
-                                      flex: 2,
+                                        flex: ResponsiveHelper.isSmallMobile(context) ? 1 : 2,
                                       child: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
-                                        children: const [
+                                          children: [
                                           Text(
                                             'NUMBER OF',
                                             style: TextStyle(
-                                              fontSize: 11,
+                                                fontSize:
+                                                    ResponsiveHelper.fontSize(
+                                                      context,
+                                                      11,
+                                                    ),
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
+                                                color: ThemeHelper.getTextColor(
+                                                  context,
+                                                ),
                                             ),
                                           ),
                                           Text(
                                             'STUDENTS',
                                             style: TextStyle(
-                                              fontSize: 11,
+                                                fontSize:
+                                                    ResponsiveHelper.fontSize(
+                                                      context,
+                                                      11,
+                                                    ),
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
+                                                color: ThemeHelper.getTextColor(
+                                                  context,
+                                                ),
                                             ),
                                           ),
                                         ],
                                       ),
                                     ),
                                     Expanded(
-                                      flex: 3,
+                                        flex: ResponsiveHelper.isSmallMobile(context) ? 2 : 3,
                                       child: Container(
-                                        padding: const EdgeInsets.only(
-                                          left: 16,
+                                          padding: EdgeInsets.only(
+                                            left: ResponsiveHelper.spacing(
+                                              context,
+                                              ResponsiveHelper.isSmallMobile(context) ? 8 : 16,
+                                            ),
                                         ),
                                         decoration: BoxDecoration(
                                           border: Border(
                                             left: BorderSide(
-                                              color: Colors.grey[400]!,
+                                                color: isDark
+                                                    ? ThemeHelper.getBorderColor(
+                                                        context,
+                                                      )
+                                                    : Colors.grey[400]!,
                                               width: 1,
+                                              ),
+                                            ),
+                                          ),
+                                          child: Text(
+                                          'NAME',
+                                          style: TextStyle(
+                                              fontSize:
+                                                  ResponsiveHelper.fontSize(
+                                                    context,
+                                                    14,
+                                                  ),
+                                            fontWeight: FontWeight.bold,
+                                              color: ThemeHelper.getTextColor(
+                                                context,
+                                              ),
                                             ),
                                           ),
                                         ),
-                                        child: const Text(
-                                          'NAME',
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.black87,
-                                          ),
-                                        ),
                                       ),
+                                    ],
                                     ),
-                                  ],
                                 ),
+                                SizedBox(
+                                  height: ResponsiveHelper.spacing(context, 8),
                               ),
-                              const SizedBox(height: 8),
 
                               // Student List
                               if (_students.isEmpty)
-                                const Padding(
-                                  padding: EdgeInsets.all(32.0),
+                                  Padding(
+                                    padding: ResponsiveHelper.padding(
+                                      context,
+                                      all: ResponsiveHelper.spacing(
+                                        context,
+                                        32,
+                                      ),
+                                    ),
                                   child: Center(
                                     child: Text(
                                       'No students in this classroom yet',
                                       style: TextStyle(
-                                        fontSize: 14,
-                                        color: Colors.grey,
+                                          fontSize: ResponsiveHelper.fontSize(
+                                            context,
+                                            14,
+                                          ),
+                                          color:
+                                              ThemeHelper.getSecondaryTextColor(
+                                                context,
+                                              ),
                                       ),
                                     ),
                                   ),
@@ -461,8 +436,11 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
                                   ),
                                 ),
 
-                              const SizedBox(height: 20),
+                                SizedBox(
+                                  height: ResponsiveHelper.spacing(context, 20),
+                                ),
                             ],
+                            ),
                           ),
                         ),
                 ),
@@ -478,35 +456,77 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
     required int studentNumber,
     required UserModel student,
   }) {
+    final isDark = ThemeHelper.isDarkMode(context);
+    final isEven = studentNumber % 2 == 0;
+
     return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      margin: EdgeInsets.only(bottom: ResponsiveHelper.spacing(context, 8)),
+      padding: ResponsiveHelper.padding(
+        context,
+        horizontal: ResponsiveHelper.spacing(context, 16),
+        vertical: ResponsiveHelper.spacing(context, 12),
+      ),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[300]!),
+        color: isDark
+            ? (isEven
+                  ? ThemeHelper.getElevatedColor(context)
+                  : ThemeHelper.getCardColor(context))
+            : Colors.white,
+        borderRadius: BorderRadius.circular(
+          ResponsiveHelper.borderRadius(context, 8),
+        ),
+        border: Border.all(
+          color: isDark
+              ? ThemeHelper.getBorderColor(context)
+              : Colors.grey[300]!,
+        ),
+        boxShadow: isDark && isEven
+            ? ThemeHelper.getGlow(
+                context,
+                color: ThemeHelper.getPrimaryGreen(context),
+                blur: 2,
+              )
+            : null,
       ),
       child: Row(
         children: [
           Expanded(
-            flex: 2,
+            flex: ResponsiveHelper.isSmallMobile(context) ? 1 : 2,
             child: Text(
               '$studentNumber',
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
+              style: TextStyle(
+                fontSize: ResponsiveHelper.fontSize(context, 14),
+                color: ThemeHelper.getTextColor(context),
+              ),
             ),
           ),
           Expanded(
-            flex: 3,
+            flex: ResponsiveHelper.isSmallMobile(context) ? 2 : 3,
             child: Container(
-              padding: const EdgeInsets.only(left: 16),
+              padding: EdgeInsets.only(
+                left: ResponsiveHelper.spacing(
+                  context,
+                  ResponsiveHelper.isSmallMobile(context) ? 8 : 16,
+                ),
+              ),
               decoration: BoxDecoration(
                 border: Border(
-                  left: BorderSide(color: Colors.grey[400]!, width: 1),
+                  left: BorderSide(
+                    color: isDark
+                        ? ThemeHelper.getBorderColor(context)
+                        : Colors.grey[400]!,
+                    width: 1,
+                  ),
                 ),
               ),
               child: Text(
                 student.name,
-                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                style: TextStyle(
+                  fontSize: ResponsiveHelper.fontSize(context, 14),
+                  color: ThemeHelper.getTextColor(context),
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
           ),
@@ -562,22 +582,20 @@ class _CreateClassroomPageState extends State<_CreateClassroomPage> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = ThemeHelper.isDarkMode(context);
+
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Create New Classroom',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Colors.black87,
-          ),
-        ),
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black87),
+      backgroundColor: ThemeHelper.getContainerColor(context),
+      appBar: CustomAppBar(showBackButton: true, title: 'Create New Classroom'),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: ThemeHelper.getBackgroundGradient(context),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
+        child: Padding(
+          padding: ResponsiveHelper.padding(
+            context,
+            all: ResponsiveHelper.contentPadding(context),
+          ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -587,46 +605,53 @@ class _CreateClassroomPageState extends State<_CreateClassroomPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     _buildTextField(
+                        context,
                       'Classroom Name:',
                       _classroomNameController,
                       'Enter classroom name',
                     ),
-                    const SizedBox(height: 24),
+                      SizedBox(height: ResponsiveHelper.spacing(context, 24)),
                     _buildTextField(
+                        context,
                       'Grade and Section:',
                       _gradeAndSectionController,
                       'e.g., Grade 7 - Section A',
                     ),
-                    const SizedBox(height: 24),
+                      SizedBox(height: ResponsiveHelper.spacing(context, 24)),
                     _buildTextField(
+                        context,
                       'Classroom Code:',
                       _classroomCodeController,
                       'Enter classroom code',
                       isNumeric: true,
                     ),
                     if (_errorMessage != null) ...[
-                      const SizedBox(height: 16),
-                      Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: BoxDecoration(
-                          color: Colors.red[50],
-                          borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: Colors.red[300]!, width: 1),
+                        SizedBox(height: ResponsiveHelper.spacing(context, 16)),
+                        CustomCard(
+                          child: Padding(
+                            padding: ResponsiveHelper.padding(
+                              context,
+                              all: ResponsiveHelper.spacing(context, 12),
                         ),
                         child: Row(
                           children: [
                             Icon(
                               Icons.error_outline,
                               color: Colors.red[700],
-                              size: 20,
+                                  size: ResponsiveHelper.iconSize(context, 20),
+                                ),
+                                SizedBox(
+                                  width: ResponsiveHelper.spacing(context, 8),
                             ),
-                            const SizedBox(width: 8),
                             Expanded(
                               child: Text(
                                 _errorMessage!,
                                 style: TextStyle(
                                   color: Colors.red[700],
-                                  fontSize: 14,
+                                      fontSize: ResponsiveHelper.fontSize(
+                                        context,
+                                        14,
+                                      ),
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -634,62 +659,54 @@ class _CreateClassroomPageState extends State<_CreateClassroomPage> {
                           ],
                         ),
                       ),
+                        ),
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
-            const SizedBox(height: 20),
+              SizedBox(height: ResponsiveHelper.spacing(context, 20)),
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: _isLoading ? null : () => Navigator.pop(context),
+                      onPressed: _isLoading
+                          ? null
+                          : () => Navigator.pop(context),
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      side: const BorderSide(color: Colors.grey),
+                        padding: EdgeInsets.symmetric(
+                          vertical: ResponsiveHelper.height(context, 16),
+                        ),
+                        side: BorderSide(
+                          color: isDark
+                              ? ThemeHelper.getBorderColor(context)
+                              : Colors.grey,
+                        ),
                     ),
-                    child: const Text(
+                      child: Text(
                       'CANCEL',
                       style: TextStyle(
-                        color: Colors.grey,
+                          color: isDark
+                              ? ThemeHelper.getSecondaryTextColor(context)
+                              : Colors.grey,
                         fontWeight: FontWeight.w600,
+                          fontSize: ResponsiveHelper.fontSize(context, 14),
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(width: 16),
+                  SizedBox(width: ResponsiveHelper.spacing(context, 16)),
                 Expanded(
-                  child: ElevatedButton(
+                    child: PrimaryButton(
+                      text: 'CREATE CLASSROOM',
                     onPressed: _isLoading ? null : _handleCreateClassroom,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFF6BBF59),
-                      foregroundColor: Colors.black87,
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                    ),
-                    child: _isLoading
-                        ? const SizedBox(
-                            width: 20,
-                            height: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                              valueColor: AlwaysStoppedAnimation<Color>(
-                                Colors.black87,
-                              ),
-                            ),
-                          )
-                        : const Text(
-                            'CREATE CLASSROOM',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
+                      isLoading: _isLoading,
                   ),
                 ),
               ],
             ),
           ],
+          ),
         ),
       ),
     );
@@ -741,9 +758,9 @@ class _CreateClassroomPageState extends State<_CreateClassroomPage> {
           widget.onClassroomCreated();
 
           ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
+            SnackBar(
               content: Text('Classroom created successfully!'),
-              backgroundColor: Color(0xFF6BBF59),
+              backgroundColor: ThemeHelper.getPrimaryGreen(context),
             ),
           );
         } else {
@@ -765,49 +782,78 @@ class _CreateClassroomPageState extends State<_CreateClassroomPage> {
   }
 
   Widget _buildTextField(
+    BuildContext context,
     String label,
     TextEditingController controller,
     String hint, {
     bool isNumeric = false,
   }) {
+    final isDark = ThemeHelper.isDarkMode(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 14,
+          style: TextStyle(
+            fontSize: ResponsiveHelper.fontSize(context, 14),
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: ThemeHelper.getTextColor(context),
           ),
         ),
-        const SizedBox(height: 6),
+        SizedBox(height: ResponsiveHelper.spacing(context, 6)),
         TextField(
           controller: controller,
           keyboardType: isNumeric ? TextInputType.number : TextInputType.text,
           inputFormatters: isNumeric
               ? [FilteringTextInputFormatter.digitsOnly]
               : null,
+          style: TextStyle(
+            color: isDark ? ThemeHelper.getTextColor(context) : Colors.black87,
+            fontSize: ResponsiveHelper.fontSize(context, 16),
+          ),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: Colors.grey[400], fontSize: 14),
+            hintStyle: TextStyle(
+              color: isDark
+                  ? ThemeHelper.getSecondaryTextColor(context)
+                  : Colors.grey[400],
+              fontSize: ResponsiveHelper.fontSize(context, 14),
+            ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: isDark
+                ? ThemeHelper.getElevatedColor(context)
+                : Colors.white,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(context, 10),
+              ),
               borderSide: BorderSide.none,
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: BorderSide(color: Colors.grey[300]!, width: 1),
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(context, 10),
+              ),
+              borderSide: BorderSide(
+                color: isDark
+                    ? ThemeHelper.getBorderColor(context)
+                    : Colors.grey[300]!,
+                width: 1,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-              borderSide: const BorderSide(color: Color(0xFF6BBF59), width: 2),
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(context, 10),
+              ),
+              borderSide: BorderSide(
+                color: ThemeHelper.getPrimaryGreen(context),
+                width: 2,
+              ),
             ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 12,
+            contentPadding: ResponsiveHelper.padding(
+              context,
+              horizontal: ResponsiveHelper.spacing(context, 16),
+              vertical: ResponsiveHelper.spacing(context, 12),
             ),
           ),
         ),

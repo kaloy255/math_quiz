@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'lesson_list_screen.dart';
 import '../utils/responsive_helper.dart';
 import '../utils/theme_helper.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/mathie_speech_bubble.dart';
 
 class LessonPageScreen extends StatefulWidget {
   const LessonPageScreen({super.key});
@@ -13,87 +15,22 @@ class LessonPageScreen extends StatefulWidget {
 class _LessonPageScreenState extends State<LessonPageScreen> {
   @override
   Widget build(BuildContext context) {
+    final isDark = ThemeHelper.isDarkMode(context);
+    final headingTextColor = ThemeHelper.getTextColor(context);
+    final headingIconColor = isDark
+        ? ThemeHelper.getPrimaryGreen(context)
+        : Colors.black87;
+
     return Scaffold(
       backgroundColor: ThemeHelper.getContainerColor(context),
+      appBar: const CustomAppBar(showBackButton: true),
       body: Container(
         decoration: BoxDecoration(
-          color: ThemeHelper.getContainerColor(context),
+          gradient: ThemeHelper.getBackgroundGradient(context),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Top Header
-              Container(
-                width: double.infinity,
-                padding: ResponsiveHelper.padding(
-                  context,
-                  horizontal: ResponsiveHelper.contentPadding(context),
-                  vertical: 12,
-                ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        // M Logo
-                        Container(
-                          width: ResponsiveHelper.iconSize(context, 40),
-                          height: ResponsiveHelper.iconSize(context, 40),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveHelper.borderRadius(context, 8),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'M',
-                              style: TextStyle(
-                                color: const Color(0xFF6BBF59),
-                                fontSize: ResponsiveHelper.fontSize(
-                                  context,
-                                  24,
-                                ),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: ResponsiveHelper.spacing(context, 12)),
-                        Text(
-                          'MathQuest',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: ResponsiveHelper.fontSize(context, 24),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      width: ResponsiveHelper.iconSize(context, 40),
-                      height: ResponsiveHelper.iconSize(context, 40),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.white,
-                        size: ResponsiveHelper.iconSize(context, 24),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               // Main Content
               Expanded(
                 child: SingleChildScrollView(
@@ -120,7 +57,9 @@ class _LessonPageScreenState extends State<LessonPageScreen> {
                                   horizontal: 24,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: const Color(0xFFD4EDD0),
+                                  color: isDark
+                                      ? ThemeHelper.getElevatedColor(context)
+                                      : const Color(0xFFD4EDD0),
                                   borderRadius: BorderRadius.circular(
                                     ResponsiveHelper.borderRadius(context, 16),
                                   ),
@@ -130,7 +69,7 @@ class _LessonPageScreenState extends State<LessonPageScreen> {
                                   children: [
                                     Icon(
                                       Icons.book_outlined,
-                                      color: Colors.black87,
+                                      color: headingIconColor,
                                       size: ResponsiveHelper.iconSize(
                                         context,
                                         32,
@@ -150,7 +89,7 @@ class _LessonPageScreenState extends State<LessonPageScreen> {
                                           24,
                                         ),
                                         fontWeight: FontWeight.bold,
-                                        color: Colors.black87,
+                                        color: headingTextColor,
                                       ),
                                     ),
                                   ],
@@ -250,63 +189,40 @@ class _LessonPageScreenState extends State<LessonPageScreen> {
                                         context,
                                         80,
                                       ),
-                                      color: const Color(0xFF6BBF59),
+                                      color: ThemeHelper.getButtonGreen(
+                                        context,
+                                      ),
                                     );
                                   },
                                 ),
                               ),
                             ),
-                            // Speech Bubble (Positioned to align with Mathie's mouth/head area)
-                            Transform.translate(
+                            // Theme-aware speech bubble asset (uses bubble_green in dark mode).
+                            // Bubble tuning guide:
+                            // - Adjust `rotation` and `offset` below for overall position.
+                            // - Use `BubbleTuningOverrides` to tweak width/height/padding/font.
+                            MathieSpeechBubble(
+                              text: 'Here are the\nresources you\nmight need.',
+                              rotation: -0.08,
                               offset: Offset(
-                                ResponsiveHelper.spacing(context, -85),
-                                ResponsiveHelper.spacing(context, -70),
+                                ResponsiveHelper.spacing(context, -90),
+                                ResponsiveHelper.spacing(context, -65),
                               ),
-                              child: Transform(
-                                alignment: Alignment.center,
-                                transform: Matrix4.diagonal3Values(-1, 1, 1),
-                                child: Container(
-                                  constraints: BoxConstraints(
-                                    maxWidth: ResponsiveHelper.width(
-                                      context,
-                                      460,
-                                    ),
-                                  ),
-                                  padding: ResponsiveHelper.padding(
-                                    context,
-                                    horizontal: 50,
-                                    vertical: 80,
-                                  ),
-                                  decoration: BoxDecoration(
-                                    image: DecorationImage(
-                                      image: AssetImage(
-                                        'assets/images/mathie/bubble_chat.png',
-                                      ),
-                                      fit: BoxFit.fill,
-                                    ),
-                                  ),
-                                  child: Transform(
-                                    alignment: Alignment.center,
-                                    transform: Matrix4.diagonal3Values(
-                                      -1,
-                                      1,
-                                      1,
-                                    ),
-                                    child: Text(
-                                      'Here are the\nresources you\nmight need..',
-                                      style: TextStyle(
-                                        fontSize: ResponsiveHelper.fontSize(
-                                          context,
-                                          13,
-                                        ),
-                                        fontWeight: FontWeight.w600,
-                                        color: Colors.black87,
-                                        height: 1.25,
-                                      ),
-                                      textAlign: TextAlign.left,
-                                    ),
-                                  ),
-                                ),
+                              tailDirection: TailDirection.bottomLeft,
+                              mirrorDarkBubble: false,
+                              mirrorLightBubble: true,
+                              darkOverrides: const BubbleTuningOverrides(
+                                width: 240,
+                                height: 150,
+                                paddingX: 18,
+                                paddingY: 18,
+                                fontSize: 14,
+                                textRotationAdjust: -0.10,
+                                textOffsetX: -10,
+                                textOffsetY: -22,
+                              ),
+                              lightOverrides: const BubbleTuningOverrides(
+                                textRotationAdjust: -0.10,
                               ),
                             ),
                           ],
@@ -324,12 +240,9 @@ class _LessonPageScreenState extends State<LessonPageScreen> {
                   context,
                   all: ResponsiveHelper.contentPadding(context),
                 ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
+                decoration: BoxDecoration(
+                  gradient: ThemeHelper.getHeaderGradient(context),
+                  boxShadow: ThemeHelper.getElevation(context, 4),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -391,6 +304,9 @@ class _LessonPageScreenState extends State<LessonPageScreen> {
     String label,
     int quarter,
   ) {
+    final isDark = ThemeHelper.isDarkMode(context);
+    final buttonTextColor = ThemeHelper.getTextColor(context);
+
     return GestureDetector(
       onTap: () {
         Navigator.push(
@@ -407,7 +323,9 @@ class _LessonPageScreenState extends State<LessonPageScreen> {
           horizontal: 16,
         ),
         decoration: BoxDecoration(
-          color: const Color(0xFFD4EDD0),
+          color: isDark
+              ? ThemeHelper.getElevatedColor(context)
+              : const Color(0xFFD4EDD0),
           borderRadius: BorderRadius.circular(
             ResponsiveHelper.borderRadius(context, 16),
           ),
@@ -419,7 +337,7 @@ class _LessonPageScreenState extends State<LessonPageScreen> {
               style: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(context, 20),
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: buttonTextColor,
               ),
             ),
             Text(
@@ -427,7 +345,7 @@ class _LessonPageScreenState extends State<LessonPageScreen> {
               style: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(context, 18),
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: buttonTextColor,
               ),
             ),
           ],

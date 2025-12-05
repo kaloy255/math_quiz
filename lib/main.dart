@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'screens/splash_screen.dart';
 import 'screens/welcome_screen.dart';
 import 'screens/role_selection_screen.dart';
 import 'screens/teacher_login_screen.dart';
@@ -38,7 +39,8 @@ class MyApp extends StatelessWidget {
                 : ThemeMode.light,
             initialRoute: '/',
             routes: {
-              '/': (context) => const WelcomeScreen(),
+              '/': (context) => const SplashScreen(),
+              '/welcome': (context) => const WelcomeScreen(),
               '/role-selection': (context) =>
                   const RoleSelectionScreen(isSignup: false),
               '/role-selection-signup': (context) =>

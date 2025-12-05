@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../services/database_service.dart';
 import '../models/user_model.dart';
 import '../models/classroom_model.dart';
+import '../utils/theme_helper.dart';
+import '../widgets/custom_app_bar.dart';
 
 class ClassroomScreen extends StatefulWidget {
   const ClassroomScreen({super.key});
@@ -77,92 +79,29 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final textColor = ThemeHelper.getTextColor(context);
+    final secondaryText = ThemeHelper.getSecondaryTextColor(context);
+    final cardColor = ThemeHelper.getCardColor(context);
+    final elevatedColor = ThemeHelper.getElevatedColor(context);
+    final borderColor = ThemeHelper.getBorderColor(context);
+    final containerColor = ThemeHelper.getContainerColor(context);
+    final dividerColor = ThemeHelper.getDividerColor(context);
+
     return Scaffold(
+      backgroundColor: containerColor,
+      appBar: const CustomAppBar(
+        showBackButton: true,
+        showProfileButton: true,
+        title: 'Classroom',
+      ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.grey[100]!, Colors.grey[50]!],
-          ),
+          gradient: ThemeHelper.getBackgroundGradient(context),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Top Header
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    // Back Button
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    // Logo
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(8),
-                              ),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'M',
-                                style: TextStyle(
-                                  color: Color(0xFF6BBF59),
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          const Text(
-                            'MathQuest',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Profile Icon
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.person,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              const SizedBox(height: 16),
 
               // CLASSROOM Title
               Container(
@@ -176,16 +115,17 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                     vertical: 12,
                   ),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFD4EDD0),
+                    color: cardColor,
                     borderRadius: BorderRadius.circular(30),
-                    border: Border.all(color: Colors.black87, width: 1),
+                    border: Border.all(color: borderColor, width: 1),
+                    boxShadow: ThemeHelper.getElevation(context, 2),
                   ),
-                  child: const Text(
+                  child: Text(
                     'CLASSROOM',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.black87,
+                      color: textColor,
                     ),
                   ),
                 ),
@@ -197,9 +137,10 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                   width: double.infinity,
                   margin: const EdgeInsets.symmetric(horizontal: 16),
                   decoration: BoxDecoration(
-                    color: const Color(0xFFF5F5DC), // Light beige
+                    color: cardColor,
                     borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: Colors.grey[300]!, width: 1),
+                    border: Border.all(color: borderColor, width: 1),
+                    boxShadow: ThemeHelper.getElevation(context, 3),
                   ),
                   child: _isLoading
                       ? const Center(child: CircularProgressIndicator())
@@ -209,43 +150,43 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               // Teacher Information
-                              const Divider(height: 1, color: Colors.grey),
+                              Divider(height: 1, color: dividerColor),
                               const SizedBox(height: 16),
-                              const Text(
+                              Text(
                                 'TEACHER:',
                                 style: TextStyle(
                                   fontSize: 16,
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
+                                  color: textColor,
                                 ),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 _teacher?.name ?? 'N/A',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.black87,
+                                  color: textColor,
                                 ),
                               ),
                               const SizedBox(height: 16),
-                              const Divider(height: 1, color: Colors.grey),
+                              Divider(height: 1, color: dividerColor),
                               const SizedBox(height: 16),
 
                               // Grade & Section Information
-                              const Text(
+                              Text(
                                 'Grade & Section:',
                                 style: TextStyle(
                                   fontSize: 14,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.black87,
+                                  color: secondaryText,
                                 ),
                               ),
                               const SizedBox(height: 8),
                               Text(
                                 _classroom?.gradeAndSection ?? 'N/A',
-                                style: const TextStyle(
+                                style: TextStyle(
                                   fontSize: 14,
-                                  color: Colors.black87,
+                                  color: textColor,
                                 ),
                               ),
                               const SizedBox(height: 24),
@@ -257,9 +198,9 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                   vertical: 12,
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.grey[200],
+                                  color: elevatedColor,
                                   borderRadius: BorderRadius.circular(8),
-                                  border: Border.all(color: Colors.grey[300]!),
+                                  border: Border.all(color: borderColor),
                                 ),
                                 child: Row(
                                   children: [
@@ -269,20 +210,20 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          const Text(
+                                          Text(
                                             'NUMBER OF',
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
+                                              color: secondaryText,
                                             ),
                                           ),
-                                          const Text(
+                                          Text(
                                             'STUDENTS',
                                             style: TextStyle(
                                               fontSize: 11,
                                               fontWeight: FontWeight.bold,
-                                              color: Colors.black87,
+                                              color: secondaryText,
                                             ),
                                           ),
                                         ],
@@ -297,17 +238,17 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                                         decoration: BoxDecoration(
                                           border: Border(
                                             left: BorderSide(
-                                              color: Colors.grey[400]!,
+                                              color: borderColor,
                                               width: 1,
                                             ),
                                           ),
                                         ),
-                                        child: const Text(
+                                        child: Text(
                                           'NAME',
                                           style: TextStyle(
                                             fontSize: 14,
                                             fontWeight: FontWeight.bold,
-                                            color: Colors.black87,
+                                            color: textColor,
                                           ),
                                         ),
                                       ),
@@ -319,14 +260,14 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
 
                               // Student List
                               if (_students.isEmpty)
-                                const Padding(
-                                  padding: EdgeInsets.all(32.0),
+                                Padding(
+                                  padding: const EdgeInsets.all(32.0),
                                   child: Center(
                                     child: Text(
                                       'No students in this classroom yet',
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: Colors.grey,
+                                        color: secondaryText,
                                       ),
                                     ),
                                   ),
@@ -347,27 +288,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
                 ),
               ),
 
-              const SizedBox(height: 16),
-
-              // Bottom Navigation Bar
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    _buildNavItem(Icons.home, 'Home', true),
-                    _buildNavItem(Icons.people, 'Users', false),
-                  ],
-                ),
-              ),
+              const SizedBox(height: 24),
             ],
           ),
         ),
@@ -379,13 +300,18 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
     required int studentNumber,
     required UserModel student,
   }) {
+    final textColor = ThemeHelper.getTextColor(context);
+    final borderColor = ThemeHelper.getBorderColor(context);
+    final cardColor = ThemeHelper.getCardColor(context);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: cardColor,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey[300]!),
+        border: Border.all(color: borderColor),
+        boxShadow: ThemeHelper.getElevation(context, 1),
       ),
       child: Row(
         children: [
@@ -393,7 +319,7 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             flex: 2,
             child: Text(
               '$studentNumber',
-              style: const TextStyle(fontSize: 14, color: Colors.black87),
+              style: TextStyle(fontSize: 14, color: textColor),
             ),
           ),
           Expanded(
@@ -401,29 +327,16 @@ class _ClassroomScreenState extends State<ClassroomScreen> {
             child: Container(
               padding: const EdgeInsets.only(left: 16),
               decoration: BoxDecoration(
-                border: Border(
-                  left: BorderSide(color: Colors.grey[400]!, width: 1),
-                ),
+                border: Border(left: BorderSide(color: borderColor, width: 1)),
               ),
               child: Text(
                 student.name,
-                style: const TextStyle(fontSize: 14, color: Colors.black87),
+                style: TextStyle(fontSize: 14, color: textColor),
               ),
             ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildNavItem(IconData icon, String label, bool isSelected) {
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, color: Colors.white, size: 32),
-        const SizedBox(height: 4),
-        Text(label, style: const TextStyle(color: Colors.white, fontSize: 12)),
-      ],
     );
   }
 }

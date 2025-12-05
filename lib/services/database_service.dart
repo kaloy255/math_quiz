@@ -273,6 +273,8 @@ class DatabaseService {
   }
 
   // Login user
+  // This saves the userId to Hive, which persists even after app is closed
+  // The session will remain active until the user explicitly logs out
   static Future<UserModel?> loginUser(String email, String password) async {
     try {
       final usersBox = getUsersBox();
@@ -293,7 +295,8 @@ class DatabaseService {
         return null; // User not found or wrong password
       }
 
-      // Save current user
+      // Save current user ID to Hive box (persists to local storage)
+      // This allows the user to remain logged in even after closing the app
       final currentUserBox = getCurrentUserBox();
       await currentUserBox.put('userId', user.id);
 
@@ -349,9 +352,16 @@ class DatabaseService {
   }
 
   // Check if user is logged in
+  // This checks if a userId exists in the persistent Hive storage
+  // Returns true if user session is still active (even after app restart)
   static bool isLoggedIn() {
+    try {
     final currentUserBox = getCurrentUserBox();
     return currentUserBox.get('userId') != null;
+    } catch (e) {
+      developer.log('Error checking login status: $e', name: 'DatabaseService');
+      return false;
+    }
   }
 
   // Save quiz attempt

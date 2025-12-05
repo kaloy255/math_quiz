@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="mathy_quiz_3v"
+        android:label="Math Quest"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

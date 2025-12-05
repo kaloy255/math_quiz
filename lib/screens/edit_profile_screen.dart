@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
 import '../models/user_model.dart';
+import '../utils/theme_helper.dart';
+import '../utils/responsive_helper.dart';
+import '../widgets/custom_app_bar.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key});
@@ -53,270 +56,226 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = ThemeHelper.isDarkMode(context);
+
     return Scaffold(
+      backgroundColor: ThemeHelper.getContainerColor(context),
+      appBar: const CustomAppBar(showBackButton: true),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.grey[100]!, Colors.grey[50]!],
-          ),
+          gradient: ThemeHelper.getBackgroundGradient(context),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              // Top Header
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
-                ),
-                child: Row(
-                  children: [
-                    // Back Button
-                    IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      onPressed: () => Navigator.pop(context),
-                    ),
-                    // Logo
-                    Expanded(
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40,
-                            height: 40,
+          child: SingleChildScrollView(
+            padding: ResponsiveHelper.padding(
+              context,
+              all: ResponsiveHelper.contentPadding(context),
+            ),
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                maxWidth: ResponsiveHelper.maxContentWidth(context),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Profile Avatar Section
+                  Center(
+                    child: Stack(
+                      children: [
+                        Container(
+                          width: ResponsiveHelper.width(context, 100),
+                          height: ResponsiveHelper.height(context, 100),
+                          decoration: BoxDecoration(
+                            color: isDark
+                                ? ThemeHelper.getElevatedColor(context)
+                                : Colors.grey[300],
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: isDark
+                                  ? ThemeHelper.getBorderColor(context)
+                                  : Colors.grey[400]!,
+                              width: 2,
+                            ),
+                          ),
+                          child: Icon(
+                            Icons.person,
+                            size: ResponsiveHelper.iconSize(context, 60),
+                            color: isDark
+                                ? ThemeHelper.getSecondaryTextColor(context)
+                                : Colors.grey[600],
+                          ),
+                        ),
+                        Positioned(
+                          bottom: 0,
+                          right: 0,
+                          child: Container(
+                            width: ResponsiveHelper.iconSize(context, 36),
+                            height: ResponsiveHelper.iconSize(context, 36),
                             decoration: BoxDecoration(
+                              color: ThemeHelper.getButtonGreen(context),
+                              shape: BoxShape.circle,
+                              border: Border.all(
+                                color: ThemeHelper.getCardColor(context),
+                                width: 3,
+                              ),
+                              boxShadow: isDark
+                                  ? ThemeHelper.getGlow(
+                                      context,
+                                      color: ThemeHelper.getPrimaryGreen(
+                                        context,
+                                      ),
+                                      blur: 4,
+                                    )
+                                  : null,
+                            ),
+                            child: Icon(
+                              Icons.camera_alt,
                               color: Colors.white,
-                              borderRadius: const BorderRadius.all(
-                                Radius.circular(8),
-                              ),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'M',
-                                style: TextStyle(
-                                  color: Color(0xFF6BBF59),
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
+                              size: ResponsiveHelper.iconSize(context, 20),
                             ),
                           ),
-                          const SizedBox(width: 12),
-                          const Text(
-                            'MathQuest',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    // Profile Icon
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.person,
-                        color: Colors.white,
-                        size: 24,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Main Content
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.all(20),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Profile Avatar Section
-                      Center(
-                        child: Stack(
-                          children: [
-                            Container(
-                              width: 100,
-                              height: 100,
-                              decoration: BoxDecoration(
-                                color: Colors.grey[300],
-                                shape: BoxShape.circle,
-                              ),
-                              child: Icon(
-                                Icons.person,
-                                size: 60,
-                                color: Colors.grey[600],
-                              ),
-                            ),
-                            Positioned(
-                              bottom: 0,
-                              right: 0,
-                              child: Container(
-                                width: 36,
-                                height: 36,
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFF6BBF59),
-                                  shape: BoxShape.circle,
-                                  border: Border.all(
-                                    color: Colors.white,
-                                    width: 3,
-                                  ),
-                                ),
-                                child: const Icon(
-                                  Icons.camera_alt,
-                                  color: Colors.white,
-                                  size: 20,
-                                ),
-                              ),
-                            ),
-                          ],
                         ),
-                      ),
-                      const SizedBox(height: 8),
-                      Center(
-                        child: Text(
-                          _currentUser?.name ?? 'Name',
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ),
-                      const SizedBox(height: 32),
-
-                      // Name Field
-                      _buildTextField(
-                        'Name',
-                        _nameController,
-                        Icons.person_outline,
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Email Field
-                      _buildTextField(
-                        'Email',
-                        _emailController,
-                        Icons.email_outlined,
-                      ),
-                      const SizedBox(height: 16),
-
-                      // LRN Field (only for students)
-                      if (_currentUser?.role == 'student') ...[
-                        _buildTextField(
-                          'LRN',
-                          _lrnController,
-                          Icons.numbers,
-                          keyboardType: TextInputType.number,
-                        ),
-                        const SizedBox(height: 16),
                       ],
-
-                      // Change Password Section
-                      const Text(
-                        'Change Password',
-                        style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Current Password Field
-                      _buildPasswordField(
-                        'Current Password',
-                        _currentPasswordController,
-                        _showCurrentPassword,
-                        () {
-                          setState(() {
-                            _showCurrentPassword = !_showCurrentPassword;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // New Password Field
-                      _buildPasswordField(
-                        'New Password',
-                        _newPasswordController,
-                        _showNewPassword,
-                        () {
-                          setState(() {
-                            _showNewPassword = !_showNewPassword;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      // Confirm New Password Field
-                      _buildPasswordField(
-                        'Confirm New Password',
-                        _confirmPasswordController,
-                        _showConfirmPassword,
-                        () {
-                          setState(() {
-                            _showConfirmPassword = !_showConfirmPassword;
-                          });
-                        },
-                      ),
-                      const SizedBox(height: 32),
-
-                      // Save Button
-                      SizedBox(
-                        width: double.infinity,
-                        height: 50,
-                        child: ElevatedButton(
-                          onPressed: _isLoading ? null : _handleSave,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: const Color(0xFF6BBF59),
-                            foregroundColor: Colors.white,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                          child: _isLoading
-                              ? const SizedBox(
-                                  width: 20,
-                                  height: 20,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.white,
-                                    ),
-                                  ),
-                                )
-                              : const Text(
-                                  'SAVE CHANGES',
-                                  style: TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                        ),
-                      ),
-                      const SizedBox(height: 20),
-                    ],
+                    ),
                   ),
-                ),
+                  SizedBox(height: ResponsiveHelper.spacing(context, 8)),
+                  Center(
+                    child: Text(
+                      _currentUser?.name ?? 'Name',
+                      style: TextStyle(
+                        fontSize: ResponsiveHelper.fontSize(context, 20),
+                        fontWeight: FontWeight.bold,
+                        color: ThemeHelper.getTextColor(context),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(context, 32)),
+
+                  // Name Field
+                  _buildTextField(
+                    'Name',
+                    _nameController,
+                    Icons.person_outline,
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(context, 16)),
+
+                  // Email Field
+                  _buildTextField(
+                    'Email',
+                    _emailController,
+                    Icons.email_outlined,
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(context, 16)),
+
+                  // LRN Field (only for students)
+                  if (_currentUser?.role == 'student') ...[
+                    _buildTextField(
+                      'LRN',
+                      _lrnController,
+                      Icons.numbers,
+                      keyboardType: TextInputType.number,
+                    ),
+                    SizedBox(height: ResponsiveHelper.spacing(context, 16)),
+                  ],
+
+                  // Change Password Section
+                  Text(
+                    'Change Password',
+                    style: TextStyle(
+                      fontSize: ResponsiveHelper.fontSize(context, 18),
+                      fontWeight: FontWeight.bold,
+                      color: ThemeHelper.getTextColor(context),
+                    ),
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(context, 16)),
+
+                  // Current Password Field
+                  _buildPasswordField(
+                    'Current Password',
+                    _currentPasswordController,
+                    _showCurrentPassword,
+                    () {
+                      setState(() {
+                        _showCurrentPassword = !_showCurrentPassword;
+                      });
+                    },
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(context, 16)),
+
+                  // New Password Field
+                  _buildPasswordField(
+                    'New Password',
+                    _newPasswordController,
+                    _showNewPassword,
+                    () {
+                      setState(() {
+                        _showNewPassword = !_showNewPassword;
+                      });
+                    },
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(context, 16)),
+
+                  // Confirm New Password Field
+                  _buildPasswordField(
+                    'Confirm New Password',
+                    _confirmPasswordController,
+                    _showConfirmPassword,
+                    () {
+                      setState(() {
+                        _showConfirmPassword = !_showConfirmPassword;
+                      });
+                    },
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(context, 32)),
+
+                  // Save Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: ResponsiveHelper.height(context, 50),
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _handleSave,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: ThemeHelper.getButtonGreen(context),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveHelper.borderRadius(context, 12),
+                          ),
+                        ),
+                        elevation: 2,
+                        shadowColor: isDark
+                            ? ThemeHelper.getPrimaryGreen(
+                                context,
+                              ).withOpacity(0.3)
+                            : null,
+                      ),
+                      child: _isLoading
+                          ? SizedBox(
+                              width: ResponsiveHelper.iconSize(context, 20),
+                              height: ResponsiveHelper.iconSize(context, 20),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: const AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              ),
+                            )
+                          : Text(
+                              'SAVE CHANGES',
+                              style: TextStyle(
+                                fontSize: ResponsiveHelper.fontSize(
+                                  context,
+                                  16,
+                                ),
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                    ),
+                  ),
+                  SizedBox(height: ResponsiveHelper.spacing(context, 20)),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
@@ -329,38 +288,77 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     IconData icon, {
     TextInputType? keyboardType,
   }) {
+    final isDark = ThemeHelper.isDarkMode(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 14,
+          style: TextStyle(
+            fontSize: ResponsiveHelper.fontSize(context, 14),
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: ThemeHelper.getTextColor(context),
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: ResponsiveHelper.spacing(context, 8)),
         TextField(
           controller: controller,
           keyboardType: keyboardType,
+          style: TextStyle(
+            color: isDark ? ThemeHelper.getTextColor(context) : Colors.black87,
+            fontSize: ResponsiveHelper.fontSize(context, 16),
+          ),
           decoration: InputDecoration(
-            prefixIcon: Icon(icon, color: Colors.grey[600]),
+            prefixIcon: Icon(
+              icon,
+              color: isDark
+                  ? ThemeHelper.getSecondaryTextColor(context)
+                  : Colors.grey[600],
+            ),
+            hintStyle: TextStyle(
+              color: isDark
+                  ? ThemeHelper.getSecondaryTextColor(context)
+                  : Colors.grey[500],
+              fontSize: ResponsiveHelper.fontSize(context, 14),
+            ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: isDark
+                ? ThemeHelper.getElevatedColor(context)
+                : Colors.white,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(context, 12),
+              ),
+              borderSide: BorderSide(
+                color: isDark
+                    ? ThemeHelper.getBorderColor(context)
+                    : Colors.grey[300]!,
+                width: 1,
+              ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(context, 12),
+              ),
+              borderSide: BorderSide(
+                color: isDark
+                    ? ThemeHelper.getBorderColor(context)
+                    : Colors.grey[300]!,
+                width: 1,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF6BBF59), width: 2),
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(context, 12),
+              ),
+              borderSide: BorderSide(
+                color: ThemeHelper.getPrimaryGreen(context),
+                width: 2,
+              ),
             ),
-            contentPadding: const EdgeInsets.symmetric(
+            contentPadding: ResponsiveHelper.padding(
+              context,
               horizontal: 16,
               vertical: 14,
             ),
@@ -376,45 +374,86 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     bool showPassword,
     VoidCallback onToggle,
   ) {
+    final isDark = ThemeHelper.isDarkMode(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
           label,
-          style: const TextStyle(
-            fontSize: 14,
+          style: TextStyle(
+            fontSize: ResponsiveHelper.fontSize(context, 14),
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: ThemeHelper.getTextColor(context),
           ),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: ResponsiveHelper.spacing(context, 8)),
         TextField(
           controller: controller,
           obscureText: !showPassword,
+          style: TextStyle(
+            color: isDark ? ThemeHelper.getTextColor(context) : Colors.black87,
+            fontSize: ResponsiveHelper.fontSize(context, 16),
+          ),
           decoration: InputDecoration(
-            prefixIcon: Icon(Icons.lock_outline, color: Colors.grey[600]),
+            prefixIcon: Icon(
+              Icons.lock_outline,
+              color: isDark
+                  ? ThemeHelper.getSecondaryTextColor(context)
+                  : Colors.grey[600],
+            ),
             suffixIcon: IconButton(
               icon: Icon(
                 showPassword ? Icons.visibility : Icons.visibility_off,
-                color: Colors.grey[600],
+                color: isDark
+                    ? ThemeHelper.getSecondaryTextColor(context)
+                    : Colors.grey[600],
               ),
               onPressed: onToggle,
             ),
+            hintStyle: TextStyle(
+              color: isDark
+                  ? ThemeHelper.getSecondaryTextColor(context)
+                  : Colors.grey[500],
+              fontSize: ResponsiveHelper.fontSize(context, 14),
+            ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: isDark
+                ? ThemeHelper.getElevatedColor(context)
+                : Colors.white,
             border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(context, 12),
+              ),
+              borderSide: BorderSide(
+                color: isDark
+                    ? ThemeHelper.getBorderColor(context)
+                    : Colors.grey[300]!,
+                width: 1,
+              ),
             ),
             enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide(color: Colors.grey[300]!),
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(context, 12),
+              ),
+              borderSide: BorderSide(
+                color: isDark
+                    ? ThemeHelper.getBorderColor(context)
+                    : Colors.grey[300]!,
+                width: 1,
+              ),
             ),
             focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(color: Color(0xFF6BBF59), width: 2),
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(context, 12),
+              ),
+              borderSide: BorderSide(
+                color: ThemeHelper.getPrimaryGreen(context),
+                width: 2,
+              ),
             ),
-            contentPadding: const EdgeInsets.symmetric(
+            contentPadding: ResponsiveHelper.padding(
+              context,
               horizontal: 16,
               vertical: 14,
             ),
@@ -544,12 +583,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Error'),
-        content: Text(message),
+        backgroundColor: ThemeHelper.getCardColor(context),
+        title: Text(
+          'Error',
+          style: TextStyle(color: ThemeHelper.getTextColor(context)),
+        ),
+        content: Text(
+          message,
+          style: TextStyle(color: ThemeHelper.getSecondaryTextColor(context)),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('OK'),
+            child: Text(
+              'OK',
+              style: TextStyle(color: ThemeHelper.getPrimaryGreen(context)),
+            ),
           ),
         ],
       ),
@@ -560,9 +609,24 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Success'),
-        content: Text(message),
-        actions: [TextButton(onPressed: onPressed, child: const Text('OK'))],
+        backgroundColor: ThemeHelper.getCardColor(context),
+        title: Text(
+          'Success',
+          style: TextStyle(color: ThemeHelper.getTextColor(context)),
+        ),
+        content: Text(
+          message,
+          style: TextStyle(color: ThemeHelper.getSecondaryTextColor(context)),
+        ),
+        actions: [
+          TextButton(
+            onPressed: onPressed,
+            child: Text(
+              'OK',
+              style: TextStyle(color: ThemeHelper.getPrimaryGreen(context)),
+            ),
+          ),
+        ],
       ),
     );
   }

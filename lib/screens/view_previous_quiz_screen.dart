@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../services/database_service.dart';
 import '../utils/responsive_helper.dart';
 import '../utils/theme_helper.dart';
+import '../widgets/app_logo.dart';
 
 class ViewPreviousQuizScreen extends StatefulWidget {
   const ViewPreviousQuizScreen({super.key});
@@ -127,17 +128,20 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final textColor = ThemeHelper.getTextColor(context);
+    final secondaryText = ThemeHelper.getSecondaryTextColor(context);
+    final primaryGreen = ThemeHelper.getPrimaryGreen(context);
+    final cardColor = ThemeHelper.getCardColor(context);
+    final elevatedColor = ThemeHelper.getElevatedColor(context);
+    final borderColor = ThemeHelper.getBorderColor(context);
+    final containerColor = ThemeHelper.getContainerColor(context);
+    final dividerColor = ThemeHelper.getDividerColor(context);
+
     return Scaffold(
+      backgroundColor: containerColor,
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              const Color(0xFF6BBF59),
-              const Color(0xFF5AA849).withValues(alpha: 0.5),
-            ],
-          ),
+          gradient: ThemeHelper.getBackgroundGradient(context),
         ),
         child: SafeArea(
           child: Column(
@@ -150,19 +154,16 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                   horizontal: ResponsiveHelper.contentPadding(context),
                   vertical: 12,
                 ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
+                decoration: BoxDecoration(
+                  gradient: ThemeHelper.getHeaderGradient(context),
+                  boxShadow: ThemeHelper.getElevation(context, 6),
                 ),
                 child: Row(
                   children: [
                     IconButton(
                       icon: Icon(
                         Icons.arrow_back,
-                        color: Colors.white,
+                        color: textColor,
                         size: ResponsiveHelper.iconSize(context, 24),
                       ),
                       onPressed: () => Navigator.pop(context),
@@ -170,30 +171,9 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                     Expanded(
                       child: Row(
                         children: [
-                          Container(
-                            width: ResponsiveHelper.iconSize(context, 40),
-                            height: ResponsiveHelper.iconSize(context, 40),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(
-                                  ResponsiveHelper.borderRadius(context, 8),
-                                ),
-                              ),
-                            ),
-                            child: Center(
-                              child: Text(
-                                'M',
-                                style: TextStyle(
-                                  color: const Color(0xFF6BBF59),
-                                  fontSize: ResponsiveHelper.fontSize(
-                                    context,
-                                    24,
-                                  ),
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                          AppLogo(
+                            backgroundColor: elevatedColor,
+                            withGlow: ThemeHelper.isDarkMode(context),
                           ),
                           SizedBox(
                             width: ResponsiveHelper.spacing(context, 12),
@@ -201,7 +181,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                           Text(
                             'MathQuest',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: textColor,
                               fontSize: ResponsiveHelper.fontSize(context, 20),
                               fontWeight: FontWeight.bold,
                             ),
@@ -228,11 +208,11 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                       vertical: 12,
                     ),
                     decoration: BoxDecoration(
-                      color: const Color(0xFFD4EDD0),
+                      color: cardColor,
                       borderRadius: BorderRadius.circular(
                         ResponsiveHelper.borderRadius(context, 12),
                       ),
-                      border: Border.all(color: Colors.black87, width: 1),
+                      border: Border.all(color: borderColor, width: 1),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
@@ -240,13 +220,13 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                         Container(
                           width: ResponsiveHelper.iconSize(context, 32),
                           height: ResponsiveHelper.iconSize(context, 32),
-                          decoration: const BoxDecoration(
-                            color: Colors.black87,
+                          decoration: BoxDecoration(
+                            color: primaryGreen,
                             shape: BoxShape.circle,
                           ),
                           child: Icon(
                             Icons.visibility,
-                            color: Colors.white,
+                            color: ThemeHelper.getInvertedTextColor(context),
                             size: ResponsiveHelper.iconSize(context, 20),
                           ),
                         ),
@@ -256,7 +236,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                           style: TextStyle(
                             fontSize: ResponsiveHelper.fontSize(context, 16),
                             fontWeight: FontWeight.bold,
-                            color: Colors.black87,
+                            color: textColor,
                           ),
                         ),
                       ],
@@ -276,7 +256,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                           style: TextStyle(
                             fontSize: ResponsiveHelper.fontSize(context, 12),
                             fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            color: textColor,
                           ),
                         ),
                         SizedBox(height: ResponsiveHelper.spacing(context, 8)),
@@ -322,7 +302,13 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                     ),
                   ),
                   child: _isLoading
-                      ? const Center(child: CircularProgressIndicator())
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              primaryGreen,
+                            ),
+                          ),
+                        )
                       : _quizAttempts.isEmpty
                       ? Center(
                           child: Column(
@@ -331,7 +317,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                               Icon(
                                 Icons.quiz_outlined,
                                 size: ResponsiveHelper.iconSize(context, 64),
-                                color: Colors.grey[400],
+                                color: secondaryText.withOpacity(0.4),
                               ),
                               SizedBox(
                                 height: ResponsiveHelper.spacing(context, 16),
@@ -343,7 +329,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                                     context,
                                     18,
                                   ),
-                                  color: Colors.grey[600],
+                                  color: secondaryText,
                                 ),
                               ),
                             ],
@@ -366,7 +352,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                                     18,
                                   ),
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
+                                  color: textColor,
                                 ),
                               ),
                             ),
@@ -381,18 +367,18 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                                   ),
                                 ),
                                 decoration: BoxDecoration(
-                                  color: Colors.white,
+                                  color: cardColor,
                                   borderRadius: BorderRadius.circular(
                                     ResponsiveHelper.borderRadius(context, 12),
                                   ),
-                                  border: Border.all(color: Colors.grey[300]!),
+                                  border: Border.all(color: borderColor),
                                 ),
                                 child: ListView(
                                   padding: EdgeInsets.zero,
                                   children: [
                                     // Header Row
                                     _buildTableHeader(),
-                                    Divider(height: 1, color: Colors.grey[300]),
+                                    Divider(height: 1, color: dividerColor),
                                     // Data Rows
                                     ...List.generate(
                                       _quizAttempts.length,
@@ -405,7 +391,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                                           if (index < _quizAttempts.length - 1)
                                             Divider(
                                               height: 1,
-                                              color: Colors.grey[300],
+                                              color: dividerColor,
                                             ),
                                         ],
                                       ),
@@ -426,6 +412,9 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
   }
 
   Widget _buildTableHeader() {
+    final textColor = ThemeHelper.getTextColor(context);
+    final headerBg = ThemeHelper.getElevatedColor(context);
+
     return Container(
       padding: ResponsiveHelper.padding(
         context,
@@ -433,7 +422,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
         vertical: 12,
       ),
       decoration: BoxDecoration(
-        color: Colors.grey[100],
+        color: headerBg,
         borderRadius: BorderRadius.vertical(
           top: Radius.circular(ResponsiveHelper.borderRadius(context, 12)),
         ),
@@ -447,7 +436,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
               style: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(context, 12),
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: textColor,
               ),
             ),
           ),
@@ -458,7 +447,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
               style: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(context, 12),
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: textColor,
               ),
             ),
           ),
@@ -469,7 +458,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
               style: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(context, 12),
                 fontWeight: FontWeight.w600,
-                color: Colors.black87,
+                color: textColor,
               ),
             ),
           ),
@@ -480,6 +469,14 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
 
   Widget _buildQuarterFilterTab(String label, int? quarter) {
     final isSelected = _selectedQuarter == quarter;
+    final isDark = ThemeHelper.isDarkMode(context);
+    final baseColor = ThemeHelper.getElevatedColor(context);
+    final borderColor = ThemeHelper.getBorderColor(context);
+    final selectedTextColor = ThemeHelper.getPrimaryGreen(context);
+    final unselectedTextColor = isDark
+        ? ThemeHelper.getTextColor(context).withOpacity(0.9)
+        : ThemeHelper.getSecondaryTextColor(context);
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -491,12 +488,15 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
         padding: ResponsiveHelper.padding(context, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected
-              ? Colors.white
-              : Colors.white.withValues(alpha: 0.3),
+              ? baseColor
+              : baseColor.withOpacity(isDark ? 0.3 : 0.6),
           borderRadius: BorderRadius.circular(
             ResponsiveHelper.borderRadius(context, 8),
           ),
-          border: Border.all(color: Colors.white, width: isSelected ? 2 : 1),
+          border: Border.all(
+            color: isSelected ? selectedTextColor : borderColor,
+            width: isSelected ? 2 : 1,
+          ),
         ),
         child: Center(
           child: Text(
@@ -504,7 +504,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
             style: TextStyle(
               fontSize: ResponsiveHelper.fontSize(context, 12),
               fontWeight: FontWeight.bold,
-              color: isSelected ? const Color(0xFF6BBF59) : Colors.white,
+              color: isSelected ? selectedTextColor : unselectedTextColor,
             ),
           ),
         ),
@@ -527,6 +527,25 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
     final quizTitle = attempt['quizTitle'] as String? ?? 'Unknown Quiz';
     final correctAnswers = attempt['correctAnswers'] as int? ?? 0;
     final totalQuestions = attempt['totalQuestions'] as int? ?? 0;
+    final textColor = ThemeHelper.getTextColor(context);
+
+    final scorePercent =
+        totalQuestions == 0 ? 0.0 : (correctAnswers / totalQuestions) * 100;
+    String status;
+    if (scorePercent >= 70) {
+      status = 'success';
+    } else if (scorePercent >= 50) {
+      status = 'warning';
+    } else {
+      status = 'error';
+    }
+
+    final statusBg = ThemeHelper.getStatusBackground(context, status);
+    final statusTextColor = status == 'success'
+        ? ThemeHelper.getSuccessColor(context)
+        : status == 'warning'
+            ? ThemeHelper.getWarningColor(context)
+            : ThemeHelper.getErrorColor(context);
 
     return Container(
       padding: ResponsiveHelper.padding(
@@ -542,7 +561,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
               quizNumber,
               style: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(context, 12),
-                color: Colors.black87,
+                color: textColor,
               ),
             ),
           ),
@@ -552,7 +571,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
               quizTitle,
               style: TextStyle(
                 fontSize: ResponsiveHelper.fontSize(context, 12),
-                color: Colors.black87,
+                color: textColor,
               ),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
@@ -570,11 +589,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                     vertical: 4,
                   ),
                   decoration: BoxDecoration(
-                    color: (correctAnswers / totalQuestions * 100) >= 70
-                        ? Colors.green[100]
-                        : (correctAnswers / totalQuestions * 100) >= 50
-                        ? Colors.orange[100]
-                        : Colors.red[100],
+                    color: statusBg,
                     borderRadius: BorderRadius.circular(
                       ResponsiveHelper.borderRadius(context, 8),
                     ),
@@ -584,11 +599,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                     style: TextStyle(
                       fontSize: ResponsiveHelper.fontSize(context, 12),
                       fontWeight: FontWeight.bold,
-                      color: (correctAnswers / totalQuestions * 100) >= 70
-                          ? Colors.green[900]
-                          : (correctAnswers / totalQuestions * 100) >= 50
-                          ? Colors.orange[900]
-                          : Colors.red[900],
+                      color: statusTextColor,
                     ),
                   ),
                 ),
@@ -598,7 +609,7 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                     width: ResponsiveHelper.iconSize(context, 24),
                     height: ResponsiveHelper.iconSize(context, 24),
                     decoration: BoxDecoration(
-                      color: const Color(0xFF6BBF59),
+                      color: ThemeHelper.getPrimaryGreen(context),
                       borderRadius: BorderRadius.circular(
                         ResponsiveHelper.borderRadius(context, 4),
                       ),

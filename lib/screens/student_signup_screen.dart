@@ -59,16 +59,14 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                     ),
                   ),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Center(
-                        child: Text(
-                          'WELCOME',
-                          style: TextStyle(
-                            fontSize: ResponsiveHelper.fontSize(context, 28),
-                            fontWeight: FontWeight.bold,
-                            color: ThemeHelper.getTextColor(context),
-                          ),
+                      Text(
+                        'WELCOME',
+                        style: TextStyle(
+                          fontSize: ResponsiveHelper.fontSize(context, 28),
+                          fontWeight: FontWeight.bold,
+                          color: ThemeHelper.getTextColor(context),
                         ),
                       ),
                       SizedBox(height: ResponsiveHelper.spacing(context, 10)),
@@ -184,34 +182,72 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
     String hint, {
     bool isPassword = false,
   }) {
+    final isDark = ThemeHelper.isDarkMode(context);
+
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(
-          label,
-          style: TextStyle(
-            fontSize: ResponsiveHelper.fontSize(context, 14),
-            fontWeight: FontWeight.w600,
-            color: Colors.black87,
+        Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: ResponsiveHelper.fontSize(context, 14),
+              fontWeight: FontWeight.w600,
+              color: ThemeHelper.getTextColor(context),
+            ),
           ),
         ),
         SizedBox(height: ResponsiveHelper.spacing(context, 6)),
         TextField(
           controller: controller,
           obscureText: isPassword,
+          style: TextStyle(
+            color: isDark ? ThemeHelper.getTextColor(context) : Colors.black87,
+            fontSize: ResponsiveHelper.fontSize(context, 16),
+          ),
           decoration: InputDecoration(
             hintText: hint,
             hintStyle: TextStyle(
-              color: Colors.grey[400],
+              color: isDark
+                  ? ThemeHelper.getSecondaryTextColor(context)
+                  : Colors.grey[500],
               fontSize: ResponsiveHelper.fontSize(context, 14),
             ),
             filled: true,
-            fillColor: Colors.white,
+            fillColor: isDark
+                ? ThemeHelper.getElevatedColor(context)
+                : Colors.white,
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(
                 ResponsiveHelper.borderRadius(context, 10),
               ),
-              borderSide: BorderSide.none,
+              borderSide: BorderSide(
+                color: isDark
+                    ? ThemeHelper.getBorderColor(context)
+                    : Colors.transparent,
+                width: 1,
+              ),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(context, 10),
+              ),
+              borderSide: BorderSide(
+                color: isDark
+                    ? ThemeHelper.getBorderColor(context)
+                    : Colors.transparent,
+                width: 1,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(
+                ResponsiveHelper.borderRadius(context, 10),
+              ),
+              borderSide: BorderSide(
+                color: ThemeHelper.getPrimaryGreen(context),
+                width: 2,
+              ),
             ),
             contentPadding: ResponsiveHelper.padding(
               context,

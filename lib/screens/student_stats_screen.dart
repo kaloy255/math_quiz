@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
 import 'package:hive_flutter/hive_flutter.dart';
-import '../widgets/app_bar_widget.dart';
 import '../services/database_service.dart';
 import '../models/user_model.dart';
+import '../utils/theme_helper.dart';
+import '../utils/responsive_helper.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_card.dart';
 
 class StudentStatsScreen extends StatefulWidget {
   const StudentStatsScreen({super.key});
@@ -183,15 +186,60 @@ class _StudentStatsScreenState extends State<StudentStatsScreen> {
     }
   }
 
+  Widget _buildSummaryChip(
+    BuildContext context, {
+    required IconData icon,
+    required String label,
+    required String value,
+  }) {
+    final textColor = ThemeHelper.getTextColor(context);
+
+    return Container(
+      padding: EdgeInsets.symmetric(
+        horizontal: ResponsiveHelper.spacing(context, 12),
+        vertical: ResponsiveHelper.spacing(context, 8),
+      ),
+      decoration: BoxDecoration(
+        color: ThemeHelper.getElevatedColor(context),
+        borderRadius: BorderRadius.circular(
+          ResponsiveHelper.borderRadius(context, 30),
+        ),
+        border: Border.all(color: ThemeHelper.getBorderColor(context)),
+        boxShadow: ThemeHelper.getElevation(context, 2),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(
+            icon,
+            size: ResponsiveHelper.iconSize(context, 16),
+            color: ThemeHelper.getPrimaryGreen(context),
+          ),
+          SizedBox(width: ResponsiveHelper.spacing(context, 6)),
+          Text(
+            '$label:',
+            style: TextStyle(
+              fontSize: ResponsiveHelper.fontSize(context, 12),
+              fontWeight: FontWeight.w600,
+              color: ThemeHelper.getSecondaryTextColor(context),
+            ),
+          ),
+          SizedBox(width: ResponsiveHelper.spacing(context, 4)),
+          Text(
+            value,
+            style: TextStyle(
+              fontSize: ResponsiveHelper.fontSize(context, 14),
+              fontWeight: FontWeight.bold,
+              color: textColor,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    if (_loading) {
-      return Scaffold(
-        appBar: const MathQuestAppBar(showBackButton: true),
-        body: const Center(child: CircularProgressIndicator()),
-      );
-    }
-
     final xpValue = _currentUser?.xp ?? 0;
     final badgeValue = _getCurrentBadge(xpValue);
     final double acc = _accuracyPct;
@@ -208,82 +256,103 @@ class _StudentStatsScreenState extends State<StudentStatsScreen> {
       remarks = 'Poor';
     }
 
+    final statTiles = [
+      _StatTile(title: 'REMARKS', value: remarks),
+      _StatTile(title: 'TOTAL QUIZ TAKEN', value: '$_totalQuizzesTaken'),
+      _StatTile(title: 'CORRECT ANSWERS', value: '$_totalCorrect'),
+      _StatTile(title: 'WRONG ANSWERS', value: '$_totalWrong'),
+      _StatTile(title: 'ACCURACY', value: '${acc.toStringAsFixed(0)}%'),
+      _StatTile(title: 'MOTIVATIONAL QUOTE', value: _currentQuote),
+      _StatTile(title: 'EXP', value: '$xpValue'),
+    ];
+
     return Scaffold(
-      appBar: const MathQuestAppBar(showBackButton: true),
+      backgroundColor: ThemeHelper.getContainerColor(context),
+      appBar: const CustomAppBar(showBackButton: true, title: 'Stats'),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.grey[100]!, Colors.grey[50]!],
-          ),
+          gradient: ThemeHelper.getBackgroundGradient(context),
         ),
         child: SafeArea(
           child: Padding(
-            padding: const EdgeInsets.all(16.0),
+            padding: ResponsiveHelper.padding(
+              context,
+              all: ResponsiveHelper.contentPadding(context),
+            ),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Title Card
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFD4EDD0),
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: const [
-                      Icon(Icons.bar_chart, color: Colors.black87),
-                      SizedBox(width: 8),
+                CustomCard(
+                  withGlow: ThemeHelper.isDarkMode(context),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(
+                            Icons.bar_chart_rounded,
+                            color: ThemeHelper.getPrimaryGreen(context),
+                            size: ResponsiveHelper.iconSize(context, 32),
+                          ),
+                          SizedBox(
+                            width: ResponsiveHelper.spacing(context, 12),
+                          ),
+                          Text(
+                            'Performance',
+                            style: TextStyle(
+                              fontSize: ResponsiveHelper.fontSize(context, 22),
+                              fontWeight: FontWeight.bold,
+                              color: ThemeHelper.getTextColor(context),
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: ResponsiveHelper.spacing(context, 12)),
                       Text(
-                        'PERFORMANCE',
+                        'Track your quiz journey and stay motivated.',
+                        textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: ThemeHelper.getSecondaryTextColor(context),
+                          fontSize: ResponsiveHelper.fontSize(context, 13),
                         ),
                       ),
+                      SizedBox(height: ResponsiveHelper.spacing(context, 16)),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-
-                // Grid of statistic cards
+                SizedBox(height: ResponsiveHelper.spacing(context, 20)),
                 Expanded(
-                  child: GridView.count(
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 12,
-                    mainAxisSpacing: 12,
-                    childAspectRatio: 0.9,
-                    children: [
-                      _StatTile(title: 'REMARKS', value: remarks),
-                      _StatTile(
-                        title: 'TOTAL QUIZ TAKEN:',
-                        value: '$_totalQuizzesTaken',
-                      ),
-                      _StatTile(
-                        title: 'CORRECT ANSWERS',
-                        value: '$_totalCorrect',
-                      ),
-                      _StatTile(title: 'WRONG ANSWERS', value: '$_totalWrong'),
-                      _StatTile(
-                        title: 'ACCURACY',
-                        value: '${_accuracyPct.toStringAsFixed(0)}%',
-                      ),
-                      _StatTile(
-                        title: 'MOTIVATIONAL QUOTE',
-                        value: _currentQuote,
-                      ),
-                      _StatTile(title: 'EXP', value: '$xpValue'),
-                      _BadgeTile(
-                        title: 'BADGE',
-                        value: badgeValue,
-                        imagePath: _getBadgeImagePath(badgeValue),
-                      ),
-                    ],
-                  ),
+                  child: _loading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              ThemeHelper.getPrimaryGreen(context),
+                            ),
+                          ),
+                        )
+                      : GridView.count(
+                          crossAxisCount: 2,
+                          crossAxisSpacing: ResponsiveHelper.spacing(
+                            context,
+                            12,
+                          ),
+                          mainAxisSpacing: ResponsiveHelper.spacing(
+                            context,
+                            12,
+                          ),
+                          childAspectRatio: 0.95,
+                          padding: EdgeInsets.zero,
+                          physics: const BouncingScrollPhysics(),
+                          children: [
+                            ...statTiles,
+                            _BadgeTile(
+                              title: 'BADGE',
+                              value: badgeValue,
+                              imagePath: _getBadgeImagePath(badgeValue),
+                            ),
+                          ],
+                        ),
                 ),
               ],
             ),
@@ -301,43 +370,42 @@ class _StatTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textColor = ThemeHelper.getTextColor(context);
+    final secondaryColor = ThemeHelper.getSecondaryTextColor(context);
+
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFD4EDD0),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black12, width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x11000000),
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
-        ],
+        color: ThemeHelper.getCardColor(context),
+        borderRadius: BorderRadius.circular(
+          ResponsiveHelper.borderRadius(context, 16),
+        ),
+        border: Border.all(color: ThemeHelper.getBorderColor(context)),
+        boxShadow: ThemeHelper.getElevation(context, 3),
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: ResponsiveHelper.cardPadding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 14,
+              style: TextStyle(
+                fontSize: ResponsiveHelper.fontSize(context, 13),
                 fontWeight: FontWeight.w700,
-                color: Colors.black87,
+                color: secondaryColor,
                 letterSpacing: 0.2,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: ResponsiveHelper.spacing(context, 8)),
             Expanded(
               child: Align(
                 alignment: Alignment.topLeft,
                 child: Text(
                   value,
-                  style: const TextStyle(
-                    fontSize: 16,
+                  style: TextStyle(
+                    fontSize: ResponsiveHelper.fontSize(context, 16),
                     fontWeight: FontWeight.w600,
-                    color: Colors.black54,
+                    color: textColor,
                     height: 1.3,
                   ),
                   softWrap: true,
@@ -363,62 +431,75 @@ class _BadgeTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final textColor = ThemeHelper.getTextColor(context);
+
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFD4EDD0),
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: Colors.black12, width: 1),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x11000000),
-            blurRadius: 6,
-            offset: Offset(0, 2),
-          ),
+        color: ThemeHelper.getCardColor(context),
+        borderRadius: BorderRadius.circular(
+          ResponsiveHelper.borderRadius(context, 16),
+        ),
+        border: Border.all(color: ThemeHelper.getBorderColor(context)),
+        boxShadow: [
+          ...ThemeHelper.getElevation(context, 3),
+          if (ThemeHelper.isDarkMode(context))
+            ...ThemeHelper.getGlow(
+              context,
+              color: ThemeHelper.getPrimaryGreen(context),
+              blur: 6,
+            ),
         ],
       ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: ResponsiveHelper.cardPadding(context),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
               title,
-              style: const TextStyle(
-                fontSize: 14,
+              style: TextStyle(
+                fontSize: ResponsiveHelper.fontSize(context, 13),
                 fontWeight: FontWeight.w700,
-                color: Colors.black87,
+                color: ThemeHelper.getSecondaryTextColor(context),
                 letterSpacing: 0.2,
               ),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: ResponsiveHelper.spacing(context, 8)),
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Container(
-                  width: 40,
-                  height: 40,
+                  width: ResponsiveHelper.iconSize(context, 44),
+                  height: ResponsiveHelper.iconSize(context, 44),
                   decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.black12),
+                    color: ThemeHelper.getElevatedColor(context),
+                    borderRadius: BorderRadius.circular(
+                      ResponsiveHelper.borderRadius(context, 10),
+                    ),
+                    border: Border.all(
+                      color: ThemeHelper.getBorderColor(context),
+                    ),
                   ),
                   clipBehavior: Clip.antiAlias,
                   child: Image.asset(
                     imagePath,
                     fit: BoxFit.contain,
                     errorBuilder: (context, error, stackTrace) {
-                      return const Icon(Icons.stars, color: Colors.black38);
+                      return Icon(
+                        Icons.stars,
+                        color: ThemeHelper.getPrimaryGreen(context),
+                      );
                     },
                   ),
                 ),
-                const SizedBox(width: 10),
+                SizedBox(width: ResponsiveHelper.spacing(context, 10)),
                 Expanded(
                   child: Text(
                     value,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: TextStyle(
+                      fontSize: ResponsiveHelper.fontSize(context, 16),
                       fontWeight: FontWeight.w600,
-                      color: Colors.black54,
+                      color: textColor,
                     ),
                     softWrap: true,
                     maxLines: 2,

@@ -25,6 +25,8 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = ThemeHelper.isDarkMode(context);
+
     return Scaffold(
       appBar: const MathQuestAppBar(showBackButton: true),
       backgroundColor: ThemeHelper.getContainerColor(context),
@@ -52,16 +54,14 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
                 ),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Center(
-                      child: Text(
+                    Text(
                         'WELCOME',
                         style: TextStyle(
                           fontSize: ResponsiveHelper.fontSize(context, 32),
                           fontWeight: FontWeight.bold,
                           color: ThemeHelper.getTextColor(context),
-                        ),
                       ),
                     ),
                     SizedBox(height: ResponsiveHelper.spacing(context, 10)),
@@ -87,26 +87,68 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
                       ),
                     ),
                     SizedBox(height: ResponsiveHelper.spacing(context, 30)),
-                    Text(
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
                       'Email:',
                       style: TextStyle(
                         fontSize: ResponsiveHelper.fontSize(context, 16),
                         fontWeight: FontWeight.w600,
                         color: ThemeHelper.getTextColor(context),
+                        ),
                       ),
                     ),
                     SizedBox(height: ResponsiveHelper.spacing(context, 8)),
                     TextField(
                       controller: _emailController,
+                      style: TextStyle(
+                        color: isDark
+                            ? ThemeHelper.getTextColor(context)
+                            : Colors.black87,
+                        fontSize: ResponsiveHelper.fontSize(context, 16),
+                      ),
                       decoration: InputDecoration(
                         hintText: 'example.deped.gov.ph',
+                        hintStyle: TextStyle(
+                          color: isDark
+                              ? ThemeHelper.getSecondaryTextColor(context)
+                              : Colors.grey[500],
+                          fontSize: ResponsiveHelper.fontSize(context, 14),
+                        ),
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: isDark
+                            ? ThemeHelper.getElevatedColor(context)
+                            : Colors.white,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(
                             ResponsiveHelper.borderRadius(context, 10),
                           ),
-                          borderSide: BorderSide.none,
+                          borderSide: BorderSide(
+                            color: isDark
+                                ? ThemeHelper.getBorderColor(context)
+                                : Colors.transparent,
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveHelper.borderRadius(context, 10),
+                          ),
+                          borderSide: BorderSide(
+                            color: isDark
+                                ? ThemeHelper.getBorderColor(context)
+                                : Colors.transparent,
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveHelper.borderRadius(context, 10),
+                          ),
+                          borderSide: BorderSide(
+                            color: ThemeHelper.getPrimaryGreen(context),
+                            width: 2,
+                          ),
                         ),
                         contentPadding: ResponsiveHelper.padding(
                           context,
@@ -116,27 +158,69 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
                       ),
                     ),
                     SizedBox(height: ResponsiveHelper.spacing(context, 20)),
-                    Text(
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
                       'Password:',
                       style: TextStyle(
                         fontSize: ResponsiveHelper.fontSize(context, 16),
                         fontWeight: FontWeight.w600,
                         color: ThemeHelper.getTextColor(context),
+                        ),
                       ),
                     ),
                     SizedBox(height: ResponsiveHelper.spacing(context, 8)),
                     TextField(
                       controller: _passwordController,
                       obscureText: true,
+                      style: TextStyle(
+                        color: isDark
+                            ? ThemeHelper.getTextColor(context)
+                            : Colors.black87,
+                        fontSize: ResponsiveHelper.fontSize(context, 16),
+                      ),
                       decoration: InputDecoration(
                         hintText: 'password',
+                        hintStyle: TextStyle(
+                          color: isDark
+                              ? ThemeHelper.getSecondaryTextColor(context)
+                              : Colors.grey[500],
+                          fontSize: ResponsiveHelper.fontSize(context, 14),
+                        ),
                         filled: true,
-                        fillColor: Colors.white,
+                        fillColor: isDark
+                            ? ThemeHelper.getElevatedColor(context)
+                            : Colors.white,
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(
                             ResponsiveHelper.borderRadius(context, 10),
                           ),
-                          borderSide: BorderSide.none,
+                          borderSide: BorderSide(
+                            color: isDark
+                                ? ThemeHelper.getBorderColor(context)
+                                : Colors.transparent,
+                            width: 1,
+                          ),
+                        ),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveHelper.borderRadius(context, 10),
+                          ),
+                          borderSide: BorderSide(
+                            color: isDark
+                                ? ThemeHelper.getBorderColor(context)
+                                : Colors.transparent,
+                            width: 1,
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(
+                            ResponsiveHelper.borderRadius(context, 10),
+                          ),
+                          borderSide: BorderSide(
+                            color: ThemeHelper.getPrimaryGreen(context),
+                            width: 2,
+                          ),
                         ),
                         contentPadding: ResponsiveHelper.padding(
                           context,
@@ -149,7 +233,9 @@ class _TeacherLoginScreenState extends State<TeacherLoginScreen> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: SizedBox(
-                        width: ResponsiveHelper.width(context, 150),
+                        width: ResponsiveHelper.isSmallMobile(context)
+                            ? ResponsiveHelper.width(context, 120)
+                            : ResponsiveHelper.width(context, 150),
                         height: ResponsiveHelper.height(context, 50),
                         child: ElevatedButton(
                           onPressed: _isLoading ? null : _handleLogin,

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import '../services/database_service.dart';
 import '../utils/theme_helper.dart';
+import '../widgets/mathie_speech_bubble.dart';
+import '../widgets/app_logo.dart';
 
 class BadgeListScreen extends StatefulWidget {
   const BadgeListScreen({super.key});
@@ -61,12 +63,19 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
     final currentUser = DatabaseService.getCurrentUser();
     final totalXp = currentUser?.xp ?? 0;
     final currentBadge = _getCurrentBadge(totalXp);
+    final isDark = ThemeHelper.isDarkMode(context);
+    final textColor = ThemeHelper.getTextColor(context);
+    final secondaryText = ThemeHelper.getSecondaryTextColor(context);
+    final primaryGreen = ThemeHelper.getPrimaryGreen(context);
+    final cardColor = ThemeHelper.getCardColor(context);
+    final elevatedColor = ThemeHelper.getElevatedColor(context);
+    final borderColor = ThemeHelper.getBorderColor(context);
 
     return Scaffold(
       backgroundColor: ThemeHelper.getContainerColor(context),
       body: Container(
         decoration: BoxDecoration(
-          color: ThemeHelper.getContainerColor(context),
+          gradient: ThemeHelper.getBackgroundGradient(context),
         ),
         child: SafeArea(
           child: Column(
@@ -78,45 +87,28 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                   horizontal: 16,
                   vertical: 12,
                 ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
+                decoration: BoxDecoration(
+                  gradient: ThemeHelper.getHeaderGradient(context),
+                  boxShadow: ThemeHelper.getElevation(context, 6),
                 ),
                 child: Row(
                   children: [
                     IconButton(
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
+                      icon: Icon(Icons.arrow_back, color: textColor),
                       onPressed: () => Navigator.pop(context),
                     ),
                     Expanded(
                       child: Row(
                         children: [
-                          Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(8),
-                            ),
-                            child: const Center(
-                              child: Text(
-                                'M',
-                                style: TextStyle(
-                                  color: Color(0xFF6BBF59),
-                                  fontSize: 24,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ),
+                          AppLogo(
+                            backgroundColor: elevatedColor,
+                            withGlow: isDark,
                           ),
                           const SizedBox(width: 12),
-                          const Text(
+                          Text(
                             'MathQuest',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: textColor,
                               fontSize: 24,
                               fontWeight: FontWeight.bold,
                             ),
@@ -128,14 +120,11 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                       width: 40,
                       height: 40,
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
+                        color: elevatedColor.withOpacity(isDark ? 0.7 : 0.3),
                         shape: BoxShape.circle,
+                        boxShadow: ThemeHelper.getElevation(context, 4),
                       ),
-                      child: const Icon(
-                        Icons.person,
-                        color: Colors.white,
-                        size: 24,
-                      ),
+                      child: Icon(Icons.person, color: textColor, size: 24),
                     ),
                   ],
                 ),
@@ -151,8 +140,10 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: ThemeHelper.getCardColor(context),
+                          color: cardColor,
                           borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: borderColor),
+                          boxShadow: ThemeHelper.getElevation(context, 3),
                         ),
                         child: Row(
                           children: [
@@ -160,12 +151,14 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                               width: 48,
                               height: 48,
                               decoration: BoxDecoration(
-                                color: const Color(0xFF6BBF59),
+                                color: primaryGreen,
                                 borderRadius: BorderRadius.circular(8),
                               ),
-                              child: const Icon(
+                              child: Icon(
                                 Icons.emoji_events,
-                                color: Colors.white,
+                                color: ThemeHelper.getInvertedTextColor(
+                                  context,
+                                ),
                                 size: 28,
                               ),
                             ),
@@ -180,7 +173,7 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
-                                      color: ThemeHelper.getTextColor(context),
+                                      color: secondaryText,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
@@ -189,7 +182,7 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: ThemeHelper.getTextColor(context),
+                                      color: textColor,
                                     ),
                                   ),
                                 ],
@@ -205,8 +198,10 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                       child: Container(
                         padding: const EdgeInsets.all(16),
                         decoration: BoxDecoration(
-                          color: ThemeHelper.getCardColor(context),
+                          color: cardColor,
                           borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: borderColor),
+                          boxShadow: ThemeHelper.getElevation(context, 3),
                         ),
                         child: Row(
                           children: [
@@ -214,17 +209,18 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                               width: 48,
                               height: 48,
                               decoration: BoxDecoration(
-                                color: ThemeHelper.getTextColor(context),
+                                color: elevatedColor,
                                 borderRadius: BorderRadius.circular(8),
+                                border: Border.all(color: borderColor),
                               ),
                               child: Image.asset(
                                 _getBadgeImagePath(currentBadge),
                                 width: 32,
                                 height: 32,
                                 errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(
+                                  return Icon(
                                     Icons.stars,
-                                    color: Colors.white,
+                                    color: primaryGreen,
                                     size: 28,
                                   );
                                 },
@@ -241,7 +237,7 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                                     style: TextStyle(
                                       fontSize: 14,
                                       fontWeight: FontWeight.w600,
-                                      color: ThemeHelper.getTextColor(context),
+                                      color: secondaryText,
                                     ),
                                   ),
                                   const SizedBox(height: 4),
@@ -250,7 +246,7 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                                     style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
-                                      color: ThemeHelper.getTextColor(context),
+                                      color: textColor,
                                     ),
                                   ),
                                 ],
@@ -286,16 +282,23 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                             margin: const EdgeInsets.only(bottom: 12),
                             padding: const EdgeInsets.all(16),
                             decoration: BoxDecoration(
-                              color: ThemeHelper.isDarkMode(context)
-                                  ? const Color(0xFF161B22)
-                                  : Colors.white,
+                              color: cardColor,
                               borderRadius: BorderRadius.circular(12),
                               border: Border.all(
                                 color: isCurrentBadge
-                                    ? ThemeHelper.getPrimaryGreen(context)
-                                    : ThemeHelper.getBorderColor(context),
+                                    ? primaryGreen
+                                    : borderColor,
                                 width: 2,
                               ),
+                              boxShadow: [
+                                ...ThemeHelper.getElevation(context, 2),
+                                if (isDark && isCurrentBadge)
+                                  ...ThemeHelper.getGlow(
+                                    context,
+                                    color: primaryGreen,
+                                    blur: 10,
+                                  ),
+                              ],
                             ),
                             child: Column(
                               children: [
@@ -310,12 +313,8 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                                           fontSize: 14,
                                           fontWeight: FontWeight.bold,
                                           color: isUnlocked
-                                              ? ThemeHelper.getTextColor(
-                                                  context,
-                                                )
-                                              : ThemeHelper.getSecondaryTextColor(
-                                                  context,
-                                                ),
+                                              ? textColor
+                                              : secondaryText,
                                         ),
                                       ),
                                     ),
@@ -324,9 +323,7 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                                     Container(
                                       width: 1,
                                       height: 60,
-                                      color: ThemeHelper.getBorderColor(
-                                        context,
-                                      ),
+                                      color: borderColor,
                                     ),
                                     const SizedBox(width: 16),
                                     // Badge Name
@@ -359,12 +356,8 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                                               fontSize: 18,
                                               fontWeight: FontWeight.bold,
                                               color: isUnlocked
-                                                  ? ThemeHelper.getTextColor(
-                                                      context,
-                                                    )
-                                                  : ThemeHelper.getSecondaryTextColor(
-                                                      context,
-                                                    ),
+                                                  ? textColor
+                                                  : secondaryText,
                                             ),
                                           ),
                                         ],
@@ -381,15 +374,12 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                                         borderRadius: BorderRadius.circular(4),
                                         child: LinearProgressIndicator(
                                           value: progress,
-                                          backgroundColor:
-                                              ThemeHelper.isDarkMode(context)
-                                              ? const Color(0xFF3A3A3A)
+                                          backgroundColor: isDark
+                                              ? elevatedColor.withOpacity(0.4)
                                               : Colors.grey[200],
                                           valueColor:
                                               AlwaysStoppedAnimation<Color>(
-                                                ThemeHelper.getPrimaryGreen(
-                                                  context,
-                                                ),
+                                                primaryGreen,
                                               ),
                                           minHeight: 8,
                                         ),
@@ -399,9 +389,7 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                                         '$xpInRange / ${badge['maxXp']}',
                                         style: TextStyle(
                                           fontSize: 12,
-                                          color: ThemeHelper.getTextColor(
-                                            context,
-                                          ),
+                                          color: secondaryText,
                                         ),
                                       ),
                                     ],
@@ -429,78 +417,23 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.end, // Align to bottom
                   children: [
-                    // Chat Bubble Image with Text (Left side)
+                    // Chat Bubble (Left side)
                     Expanded(
                       flex: 1,
-                      child: Transform.translate(
-                        offset: const Offset(
-                          75,
-                          -30, // Positive value to move down more
-                        ),
-                        child: Transform.rotate(
-                          angle:
-                              -0.30, // Slight rotation in radians (~-4.5 degrees)
-                          child: Stack(
-                            alignment: Alignment.center,
-                            children: [
-                              Image.asset(
-                                'assets/images/mathie/bubble_chat.png',
-                                fit: BoxFit.contain,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 18,
-                                      vertical: 14,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: const BorderRadius.only(
-                                        topLeft: Radius.circular(20),
-                                        topRight: Radius.circular(20),
-                                        bottomLeft: Radius.circular(20),
-                                        bottomRight: Radius.circular(4),
-                                      ),
-                                      border: Border.all(
-                                        color: ThemeHelper.getTextColor(
-                                          context,
-                                        ),
-                                        width: 2,
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'EARN XP TO UNLOCK NEW BADGE',
-                                      style: TextStyle(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.w600,
-                                        color: ThemeHelper.getTextColor(
-                                          context,
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                },
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 8,
-                                  vertical: 4,
-                                ),
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(
-                                    'EARN XP TO\nUNLOCK NEW BADGE',
-                                    textAlign: TextAlign.center,
-                                    style: TextStyle(
-                                      fontSize: 11,
-                                      color: ThemeHelper.getTextColor(context),
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.2,
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
+                      child: MathieSpeechBubble(
+                        text: 'EARN XP TO\nUNLOCK NEW BADGE',
+                        rotation: -0.30,
+                        offset: const Offset(55, -20),
+                        tailDirection: TailDirection.bottomRight,
+                        lightOverrides: const BubbleTuningOverrides(
+                          width: 340,
+                          height: 230,
+                          paddingX: 22,
+                          paddingY: 24,
+                          fontSize: 13,
+                          textRotationAdjust: -0.12,
+                          textOffsetX: -6,
+                          textOffsetY: -4,
                         ),
                       ),
                     ),
@@ -541,41 +474,38 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(16),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
+                decoration: BoxDecoration(
+                  gradient: ThemeHelper.getHeaderGradient(context),
+                  boxShadow: ThemeHelper.getElevation(context, 6),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     GestureDetector(
                       onTap: () => Navigator.pop(context),
-                      child: const Column(
+                      child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Icon(Icons.home, color: Colors.white70, size: 32),
-                          SizedBox(height: 4),
+                          Icon(Icons.home, color: secondaryText, size: 32),
+                          const SizedBox(height: 4),
                           Text(
                             'Home',
                             style: TextStyle(
-                              color: Colors.white70,
+                              color: secondaryText,
                               fontSize: 12,
                             ),
                           ),
                         ],
                       ),
                     ),
-                    const Column(
+                    Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.people, color: Colors.white, size: 32),
-                        SizedBox(height: 4),
+                        Icon(Icons.people, color: textColor, size: 32),
+                        const SizedBox(height: 4),
                         Text(
                           'Users',
-                          style: TextStyle(color: Colors.white, fontSize: 12),
+                          style: TextStyle(color: textColor, fontSize: 12),
                         ),
                       ],
                     ),

@@ -3,6 +3,8 @@ import 'quiz_taking_screen.dart';
 import '../services/database_service.dart';
 import '../utils/responsive_helper.dart';
 import '../utils/theme_helper.dart';
+import '../widgets/custom_app_bar.dart';
+import '../widgets/custom_card.dart';
 
 class QuizSelectionScreen extends StatefulWidget {
   const QuizSelectionScreen({super.key});
@@ -41,24 +43,9 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
           {'id': '7', 'title': 'Linear Functions'},
         ];
       case 3:
-        return [
-          {'id': '1', 'title': 'Factoring Polynomials'},
-          {'id': '2', 'title': 'Quadratic Equations'},
-          {'id': '3', 'title': 'Solving Quadratics'},
-          {'id': '4', 'title': 'Quadratic Formula'},
-          {'id': '5', 'title': 'Systems of Equations'},
-          {'id': '6', 'title': 'Graphing Linear Inequalities'},
-        ];
+        return [];
       case 4:
-        return [
-          {'id': '1', 'title': 'Rational Expressions'},
-          {'id': '2', 'title': 'Radical Equations'},
-          {'id': '3', 'title': 'Exponential Functions'},
-          {'id': '4', 'title': 'Polynomial Operations'},
-          {'id': '5', 'title': 'Advanced Word Problems'},
-          {'id': '6', 'title': 'Function Notation'},
-          {'id': '7', 'title': 'Algebra Review'},
-        ];
+        return [];
       default:
         return [];
     }
@@ -68,121 +55,42 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: ThemeHelper.getContainerColor(context),
+      appBar: const CustomAppBar(showBackButton: true),
       body: Container(
         decoration: BoxDecoration(
-          color: ThemeHelper.getContainerColor(context),
+          gradient: ThemeHelper.getBackgroundGradient(context),
         ),
         child: SafeArea(
           child: Column(
             children: [
-              // Top Header with green gradient
-              Container(
-                width: double.infinity,
-                padding: ResponsiveHelper.padding(
-                  context,
-                  horizontal: ResponsiveHelper.contentPadding(context),
-                  vertical: 12,
-                ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Row(
-                      children: [
-                        // M Logo
-                        Container(
-                          width: ResponsiveHelper.iconSize(context, 40),
-                          height: ResponsiveHelper.iconSize(context, 40),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(
-                              ResponsiveHelper.borderRadius(context, 8),
-                            ),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'M',
-                              style: TextStyle(
-                                color: const Color(0xFF6BBF59),
-                                fontSize: ResponsiveHelper.fontSize(
-                                  context,
-                                  24,
-                                ),
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: ResponsiveHelper.spacing(context, 12)),
-                        Text(
-                          'MathQuest',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: ResponsiveHelper.fontSize(context, 24),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    Container(
-                      width: ResponsiveHelper.iconSize(context, 40),
-                      height: ResponsiveHelper.iconSize(context, 40),
-                      decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.2),
-                        shape: BoxShape.circle,
-                      ),
-                      child: Icon(
-                        Icons.person,
-                        color: Colors.white,
-                        size: ResponsiveHelper.iconSize(context, 24),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
               // Title Card
-              Container(
-                margin: ResponsiveHelper.margin(
+              Padding(
+                padding: ResponsiveHelper.padding(
                   context,
                   all: ResponsiveHelper.contentPadding(context),
                 ),
-                padding: ResponsiveHelper.padding(
-                  context,
-                  horizontal: 20,
-                  vertical: 12,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFD4EDD0),
-                  borderRadius: BorderRadius.circular(
-                    ResponsiveHelper.borderRadius(context, 12),
+                child: CustomCard(
+                  withGlow: true,
+                  child: Column(
+                    children: [
+                      Text(
+                        'ALGEBRA QUIZ',
+                        style: TextStyle(
+                          fontSize: ResponsiveHelper.fontSize(context, 28),
+                          fontWeight: FontWeight.bold,
+                          color: ThemeHelper.getTextColor(context),
+                        ),
+                      ),
+                      SizedBox(height: ResponsiveHelper.spacing(context, 4)),
+                      Text(
+                        'Timed quizzes with instant Scoring',
+                        style: TextStyle(
+                          fontSize: ResponsiveHelper.fontSize(context, 14),
+                          color: ThemeHelper.getSecondaryTextColor(context),
+                        ),
+                      ),
+                    ],
                   ),
-                ),
-                child: Column(
-                  children: [
-                    Text(
-                      'ALGEBRA QUIZ',
-                      style: TextStyle(
-                        fontSize: ResponsiveHelper.fontSize(context, 28),
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black87,
-                      ),
-                    ),
-                    SizedBox(height: ResponsiveHelper.spacing(context, 4)),
-                    Text(
-                      'Timed quizzes with instant Scoring',
-                      style: TextStyle(
-                        fontSize: ResponsiveHelper.fontSize(context, 14),
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ],
                 ),
               ),
 
@@ -193,33 +101,35 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                     clipBehavior: Clip.none,
                     children: [
                       // Mathie Character (Behind quiz list, Right side, scrolls with content)
-                      Positioned(
-                        top: ResponsiveHelper.height(context, 55),
-                        right: 0,
-                        child: Image.asset(
-                          'assets/images/mathie/quiz_list_mathie.png',
-                          width: ResponsiveHelper.width(context, 160),
-                          height: ResponsiveHelper.height(context, 160),
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: ResponsiveHelper.width(context, 160),
-                              height: ResponsiveHelper.height(context, 160),
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF6BBF59),
-                                borderRadius: BorderRadius.circular(
-                                  ResponsiveHelper.borderRadius(context, 80),
+                      // Only visible when there are quizzes available
+                      if (_quizzes.isNotEmpty)
+                        Positioned(
+                          top: ResponsiveHelper.height(context, 55),
+                          right: 0,
+                          child: Image.asset(
+                            'assets/images/mathie/quiz_list_mathie.png',
+                            width: ResponsiveHelper.width(context, 160),
+                            height: ResponsiveHelper.height(context, 160),
+                            fit: BoxFit.contain,
+                            errorBuilder: (context, error, stackTrace) {
+                              return Container(
+                                width: ResponsiveHelper.width(context, 160),
+                                height: ResponsiveHelper.height(context, 160),
+                                decoration: BoxDecoration(
+                                  color: const Color(0xFF6BBF59),
+                                  borderRadius: BorderRadius.circular(
+                                    ResponsiveHelper.borderRadius(context, 80),
+                                  ),
                                 ),
-                              ),
-                              child: Icon(
-                                Icons.sentiment_very_satisfied,
-                                color: Colors.white,
-                                size: ResponsiveHelper.iconSize(context, 80),
-                              ),
-                            );
-                          },
+                                child: Icon(
+                                  Icons.sentiment_very_satisfied,
+                                  color: Colors.white,
+                                  size: ResponsiveHelper.iconSize(context, 80),
+                                ),
+                              );
+                            },
+                          ),
                         ),
-                      ),
                       // Content Column (On top of Mathie)
                       Padding(
                         padding: ResponsiveHelper.padding(
@@ -242,7 +152,7 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                                     14,
                                   ),
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
+                                  color: ThemeHelper.getTextColor(context),
                                 ),
                               ),
                               SizedBox(
@@ -278,7 +188,7 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                                     14,
                                   ),
                                   fontWeight: FontWeight.bold,
-                                  color: Colors.black87,
+                                  color: ThemeHelper.getTextColor(context),
                                 ),
                               ),
                               SizedBox(
@@ -300,7 +210,10 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                                               context,
                                               16,
                                             ),
-                                            color: Colors.black54,
+                                            color:
+                                                ThemeHelper.getSecondaryTextColor(
+                                                  context,
+                                                ),
                                           ),
                                         ),
                                       ),
@@ -331,12 +244,9 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                   context,
                   all: ResponsiveHelper.contentPadding(context),
                 ),
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [Color(0xFF6BBF59), Color(0xFF5AA849)],
-                  ),
+                decoration: BoxDecoration(
+                  gradient: ThemeHelper.getHeaderGradient(context),
+                  boxShadow: ThemeHelper.getElevation(context, 4),
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -348,7 +258,7 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                         children: [
                           Icon(
                             Icons.home,
-                            color: Colors.white70,
+                            color: ThemeHelper.getSecondaryTextColor(context),
                             size: ResponsiveHelper.iconSize(context, 32),
                           ),
                           SizedBox(
@@ -357,7 +267,7 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                           Text(
                             'Home',
                             style: TextStyle(
-                              color: Colors.white70,
+                              color: ThemeHelper.getSecondaryTextColor(context),
                               fontSize: ResponsiveHelper.fontSize(context, 12),
                             ),
                           ),
@@ -369,14 +279,14 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                       children: [
                         Icon(
                           Icons.people,
-                          color: Colors.white,
+                          color: ThemeHelper.getTextColor(context),
                           size: ResponsiveHelper.iconSize(context, 32),
                         ),
                         SizedBox(height: ResponsiveHelper.spacing(context, 4)),
                         Text(
                           'Users',
                           style: TextStyle(
-                            color: Colors.white,
+                            color: ThemeHelper.getTextColor(context),
                             fontSize: ResponsiveHelper.fontSize(context, 12),
                           ),
                         ),
@@ -394,6 +304,8 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
 
   Widget _buildQuarterTab(String label, int quarter) {
     final isSelected = _selectedQuarter == quarter;
+    final isDark = ThemeHelper.isDarkMode(context);
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -403,10 +315,28 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
       child: Container(
         padding: ResponsiveHelper.padding(context, vertical: 12),
         decoration: BoxDecoration(
-          color: isSelected ? const Color(0xFF6BBF59) : const Color(0xFFD4EDD0),
+          color: isSelected
+              ? ThemeHelper.getButtonGreen(context)
+              : (isDark
+                    ? ThemeHelper.getCardColor(context)
+                    : const Color(0xFFD4EDD0)),
           borderRadius: BorderRadius.circular(
             ResponsiveHelper.borderRadius(context, 8),
           ),
+          border: isDark
+              ? Border.all(
+                  color: isSelected
+                      ? ThemeHelper.getPrimaryGreen(context)
+                      : ThemeHelper.getBorderColor(context),
+                  width: isSelected ? 2 : 1,
+                )
+              : null,
+          boxShadow: isDark && isSelected
+              ? ThemeHelper.getGlow(
+                  context,
+                  color: ThemeHelper.getPrimaryGreen(context),
+                )
+              : null,
         ),
         child: Center(
           child: Text(
@@ -414,7 +344,9 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
             style: TextStyle(
               fontSize: ResponsiveHelper.fontSize(context, 14),
               fontWeight: FontWeight.bold,
-              color: isSelected ? Colors.white : Colors.black87,
+              color: isSelected
+                  ? Colors.white
+                  : ThemeHelper.getTextColor(context),
             ),
           ),
         ),
@@ -449,7 +381,10 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
   }
 
   int _getTotalQuestionsForQuiz(String quizId) {
-    return 7; // All quizzes have 7 questions for now
+    if (_selectedQuarter == 1 && quizId == '1') {
+      return 20;
+    }
+    return 7; // Default for other quizzes
   }
 
   Widget _buildQuizItem({
@@ -469,6 +404,21 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
       uniqueQuizId,
       _selectedQuarter.toString(),
     );
+    final isDark = ThemeHelper.isDarkMode(context);
+    final cardColor = ThemeHelper.getCardColor(context);
+    final borderColor = ThemeHelper.getBorderColor(context);
+    final textColor = ThemeHelper.getTextColor(context);
+    final successColor = ThemeHelper.getSuccessColor(context);
+    final warningColor = ThemeHelper.getWarningColor(context);
+    final xpColor = remainingXP > 0 ? warningColor : successColor;
+    final xpTextColor = ThemeHelper.getInvertedTextColor(context);
+    final timerBg = isDark
+        ? ThemeHelper.getElevatedColor(context)
+        : Colors.orange[200]!;
+    final timerTextColor = isDark
+        ? warningColor
+        : ThemeHelper.getInvertedTextColor(context);
+    final startBg = ThemeHelper.getElevatedColor(context);
 
     return GestureDetector(
       onTap: () async {
@@ -490,11 +440,12 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
         margin: EdgeInsets.only(bottom: ResponsiveHelper.spacing(context, 12)),
         padding: ResponsiveHelper.cardPadding(context),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: cardColor,
           borderRadius: BorderRadius.circular(
             ResponsiveHelper.borderRadius(context, 12),
           ),
-          border: Border.all(color: Colors.grey[300]!, width: 1),
+          border: Border.all(color: borderColor, width: 1),
+          boxShadow: ThemeHelper.getElevation(context, 2),
         ),
         child: Column(
           children: [
@@ -510,7 +461,7 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                         style: TextStyle(
                           fontSize: ResponsiveHelper.fontSize(context, 16),
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: textColor,
                         ),
                       ),
                       SizedBox(height: ResponsiveHelper.spacing(context, 8)),
@@ -526,12 +477,17 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: remainingXP > 0
-                                  ? Colors.orange[300]
-                                  : const Color(0xFF6BBF59),
+                              color: xpColor,
                               borderRadius: BorderRadius.circular(
                                 ResponsiveHelper.borderRadius(context, 8),
                               ),
+                              boxShadow: ThemeHelper.isDarkMode(context)
+                                  ? ThemeHelper.getGlow(
+                                      context,
+                                      color: xpColor,
+                                      blur: 4,
+                                    )
+                                  : null,
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
@@ -556,7 +512,7 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                                       12,
                                     ),
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: xpTextColor,
                                   ),
                                 ),
                               ],
@@ -569,17 +525,23 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: Colors.orange[200],
+                              color: timerBg,
                               borderRadius: BorderRadius.circular(
                                 ResponsiveHelper.borderRadius(context, 8),
                               ),
+                              border: ThemeHelper.isDarkMode(context)
+                                  ? Border.all(
+                                      color: warningColor.withOpacity(0.4),
+                                      width: 1.2,
+                                    )
+                                  : null,
                             ),
                             child: Row(
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Icon(
                                   Icons.timer,
-                                  color: Colors.white,
+                                  color: timerTextColor,
                                   size: ResponsiveHelper.iconSize(context, 14),
                                 ),
                                 SizedBox(
@@ -593,7 +555,7 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                                       12,
                                     ),
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.white,
+                                    color: timerTextColor,
                                   ),
                                 ),
                               ],
@@ -611,11 +573,14 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                     vertical: 8,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.grey[200],
+                    color: startBg,
                     borderRadius: BorderRadius.circular(
                       ResponsiveHelper.borderRadius(context, 20),
                     ),
-                    border: Border.all(color: Colors.black87, width: 1),
+                    border: Border.all(
+                      color: ThemeHelper.getPrimaryGreen(context),
+                      width: 2,
+                    ),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
@@ -625,14 +590,14 @@ class _QuizSelectionScreenState extends State<QuizSelectionScreen> {
                         style: TextStyle(
                           fontSize: ResponsiveHelper.fontSize(context, 14),
                           fontWeight: FontWeight.bold,
-                          color: Colors.black87,
+                          color: ThemeHelper.getPrimaryGreen(context),
                         ),
                       ),
                       SizedBox(width: ResponsiveHelper.spacing(context, 4)),
                       Icon(
                         Icons.arrow_forward,
                         size: ResponsiveHelper.iconSize(context, 16),
-                        color: Colors.black87,
+                        color: ThemeHelper.getPrimaryGreen(context),
                       ),
                     ],
                   ),
