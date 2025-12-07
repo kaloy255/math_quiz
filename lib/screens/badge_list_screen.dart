@@ -260,13 +260,14 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                 ),
               ),
 
-              // Scrollable Badge List
+              // Scrollable Badge List with Mathie at the bottom
               Expanded(
                 child: SingleChildScrollView(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Column(
                     children: [
                       const SizedBox(height: 4),
+                      // Badge List
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -400,116 +401,68 @@ class _BadgeListScreenState extends State<BadgeListScreen> {
                           );
                         },
                       ),
-                      const SizedBox(height: 120), // Space for Mathie below
+                      const SizedBox(height: 20),
+                      // Speech Bubble with Mathie Character (at bottom of list)
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 4),
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            // Chat Bubble (Left side)
+                            Expanded(
+                              flex: 1,
+                              child: MathieSpeechBubble(
+                                text: 'EARN XP TO\nUNLOCK NEW BADGE',
+                                rotation: -0.30,
+                                offset: const Offset(55, -20),
+                                tailDirection: TailDirection.bottomRight,
+                                lightOverrides: const BubbleTuningOverrides(
+                                  width: 340,
+                                  height: 230,
+                                  paddingX: 22,
+                                  paddingY: 24,
+                                  fontSize: 13,
+                                  textRotationAdjust: -0.25,
+                                  textOffsetX: 0,
+                                  textOffsetY: 0,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            // Mathie Character (Right side)
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                alignment: Alignment.bottomRight,
+                                child: Image.asset(
+                                  'assets/images/mathie/badge_mathie.png',
+                                  width: 150,
+                                  height: 150,
+                                  fit: BoxFit.contain,
+                                  errorBuilder: (context, error, stackTrace) {
+                                    return Container(
+                                      width: 90,
+                                      height: 90,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF6BBF59),
+                                        borderRadius: BorderRadius.circular(40),
+                                      ),
+                                      child: const Icon(
+                                        Icons.celebration,
+                                        color: Colors.white,
+                                        size: 40,
+                                      ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 20),
                     ],
                   ),
-                ),
-              ),
-
-              // Speech Bubble with Mathie Character (Fixed at bottom)
-              Padding(
-                padding: const EdgeInsets.only(
-                  left: 16,
-                  right: 16,
-                  top: 0, // Reduced top padding to lower Mathie
-                  bottom: 0,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.end, // Align to bottom
-                  children: [
-                    // Chat Bubble (Left side)
-                    Expanded(
-                      flex: 1,
-                      child: MathieSpeechBubble(
-                        text: 'EARN XP TO\nUNLOCK NEW BADGE',
-                        rotation: -0.30,
-                        offset: const Offset(55, -20),
-                        tailDirection: TailDirection.bottomRight,
-                        lightOverrides: const BubbleTuningOverrides(
-                          width: 340,
-                          height: 230,
-                          paddingX: 22,
-                          paddingY: 24,
-                          fontSize: 13,
-                          textRotationAdjust: -0.12,
-                          textOffsetX: -6,
-                          textOffsetY: -4,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 4),
-                    // Mathie Character (Right side)
-                    Expanded(
-                      flex: 1,
-                      child: Container(
-                        alignment: Alignment.bottomRight,
-                        child: Image.asset(
-                          'assets/images/mathie/badge_mathie.png',
-                          width: 150,
-                          height: 150,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return Container(
-                              width: 90,
-                              height: 90,
-                              decoration: BoxDecoration(
-                                color: const Color(0xFF6BBF59),
-                                borderRadius: BorderRadius.circular(40),
-                              ),
-                              child: const Icon(
-                                Icons.celebration,
-                                color: Colors.white,
-                                size: 40,
-                              ),
-                            );
-                          },
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-
-              // Bottom Navigation Bar
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  gradient: ThemeHelper.getHeaderGradient(context),
-                  boxShadow: ThemeHelper.getElevation(context, 6),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.home, color: secondaryText, size: 32),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Home',
-                            style: TextStyle(
-                              color: secondaryText,
-                              fontSize: 12,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(Icons.people, color: textColor, size: 32),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Users',
-                          style: TextStyle(color: textColor, fontSize: 12),
-                        ),
-                      ],
-                    ),
-                  ],
                 ),
               ),
             ],

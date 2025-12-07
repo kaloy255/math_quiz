@@ -102,12 +102,12 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
                       context,
                       horizontal: ResponsiveHelper.spacing(context, 24),
                       vertical: ResponsiveHelper.spacing(context, 12),
-                            ),
-                              child: Text(
+                    ),
+                    child: Text(
                       'Classroom List',
-                                style: TextStyle(
+                      style: TextStyle(
                         fontSize: ResponsiveHelper.fontSize(context, 18),
-                                  fontWeight: FontWeight.bold,
+                        fontWeight: FontWeight.bold,
                         color: ThemeHelper.getTextColor(context),
                       ),
                     ),
@@ -126,7 +126,7 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
                   child: PrimaryButton(
                     text: 'CLASSROOM',
                     icon: Icons.add_circle_outline,
-                        onPressed: () => _showCreateClassroomDialog(),
+                    onPressed: () => _showCreateClassroomDialog(),
                   ),
                 ),
               ),
@@ -146,80 +146,80 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
                         context,
                         horizontal: ResponsiveHelper.spacing(context, 16),
                         vertical: ResponsiveHelper.spacing(context, 8),
-                    ),
-                    child: Row(
-                      children: [
+                      ),
+                      child: Row(
+                        children: [
                           Icon(
-                          Icons.filter_list,
+                            Icons.filter_list,
                             color: ThemeHelper.getPrimaryGreen(context),
                             size: ResponsiveHelper.iconSize(context, 20),
-                        ),
+                          ),
                           SizedBox(
                             width: ResponsiveHelper.spacing(context, 12),
                           ),
                           Text(
-                          'Filter Classroom:',
-                          style: TextStyle(
+                            'Filter Classroom:',
+                            style: TextStyle(
                               fontSize: ResponsiveHelper.fontSize(context, 14),
-                            fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w600,
                               color: ThemeHelper.getTextColor(context),
                             ),
                           ),
                           SizedBox(
                             width: ResponsiveHelper.spacing(context, 12),
-                        ),
-                        Expanded(
-                          child: DropdownButtonHideUnderline(
-                            child: DropdownButton<ClassroomModel>(
-                              value: _selectedClassroom,
-                              isExpanded: true,
+                          ),
+                          Expanded(
+                            child: DropdownButtonHideUnderline(
+                              child: DropdownButton<ClassroomModel>(
+                                value: _selectedClassroom,
+                                isExpanded: true,
                                 icon: Icon(
-                                Icons.arrow_drop_down,
+                                  Icons.arrow_drop_down,
                                   color: ThemeHelper.getPrimaryGreen(context),
-                              ),
+                                ),
                                 style: TextStyle(
                                   fontSize: ResponsiveHelper.fontSize(
                                     context,
                                     14,
                                   ),
                                   color: ThemeHelper.getTextColor(context),
-                                fontWeight: FontWeight.w500,
-                              ),
+                                  fontWeight: FontWeight.w500,
+                                ),
                                 dropdownColor: isDark
                                     ? ThemeHelper.getCardColor(context)
                                     : Colors.white,
-                              items: _classrooms.map((classroom) {
-                                // Get student count from pre-calculated map
-                                final studentCount =
-                                    _classroomStudentCounts[classroom
-                                        .classroomCode] ??
-                                    0;
-                                final displayName =
-                                    '${classroom.classroomCode} ($studentCount ${studentCount == 1 ? 'student' : 'students'})';
+                                items: _classrooms.map((classroom) {
+                                  // Get student count from pre-calculated map
+                                  final studentCount =
+                                      _classroomStudentCounts[classroom
+                                          .classroomCode] ??
+                                      0;
+                                  final displayName =
+                                      '${classroom.classroomCode} ($studentCount ${studentCount == 1 ? 'student' : 'students'})';
 
-                                return DropdownMenuItem<ClassroomModel>(
-                                  value: classroom,
-                                  child: Text(displayName),
-                                );
-                              }).toList(),
-                              onChanged: (ClassroomModel? newValue) {
-                                if (!mounted) return;
+                                  return DropdownMenuItem<ClassroomModel>(
+                                    value: classroom,
+                                    child: Text(displayName),
+                                  );
+                                }).toList(),
+                                onChanged: (ClassroomModel? newValue) {
+                                  if (!mounted) return;
 
-                                setState(() {
-                                  _selectedClassroom = newValue;
-                                  if (_selectedClassroom != null) {
-                                    _students = _getStudentsInClassroom(
-                                      _selectedClassroom!.classroomCode,
-                                    );
-                                  } else {
-                                    _students = [];
-                                  }
-                                });
-                              },
+                                  setState(() {
+                                    _selectedClassroom = newValue;
+                                    if (_selectedClassroom != null) {
+                                      _students = _getStudentsInClassroom(
+                                        _selectedClassroom!.classroomCode,
+                                      );
+                                    } else {
+                                      _students = [];
+                                    }
+                                  });
+                                },
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
                       ),
                     ),
                   ),
@@ -236,7 +236,7 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
                   ),
                   child: CustomCard(
                     withGlow: isDark,
-                  child: _isLoading
+                    child: _isLoading
                         ? Center(
                             child: CircularProgressIndicator(
                               valueColor: AlwaysStoppedAnimation<Color>(
@@ -244,31 +244,31 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
                               ),
                             ),
                           )
-                      : SingleChildScrollView(
+                        : SingleChildScrollView(
                             padding: ResponsiveHelper.padding(
                               context,
                               all: ResponsiveHelper.spacing(context, 20),
                             ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Grade & Section
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                // Grade & Section
                                 Text(
-                                'Grade & Section:',
-                                style: TextStyle(
+                                  'Grade & Section:',
+                                  style: TextStyle(
                                     fontSize: ResponsiveHelper.fontSize(
                                       context,
                                       14,
                                     ),
-                                  fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w600,
                                     color: ThemeHelper.getTextColor(context),
                                   ),
                                 ),
                                 SizedBox(
                                   height: ResponsiveHelper.spacing(context, 4),
-                              ),
-                              Text(
-                                _selectedClassroom?.gradeAndSection ?? 'N/A',
+                                ),
+                                Text(
+                                  _selectedClassroom?.gradeAndSection ?? 'N/A',
                                   style: TextStyle(
                                     fontSize: ResponsiveHelper.fontSize(
                                       context,
@@ -277,14 +277,14 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
                                     color: ThemeHelper.getSecondaryTextColor(
                                       context,
                                     ),
+                                  ),
                                 ),
-                              ),
                                 SizedBox(
                                   height: ResponsiveHelper.spacing(context, 16),
                                 ),
 
-                              // Table Header
-                              Container(
+                                // Table Header
+                                Container(
                                   padding: ResponsiveHelper.padding(
                                     context,
                                     horizontal: ResponsiveHelper.spacing(
@@ -295,8 +295,8 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
                                       context,
                                       12,
                                     ),
-                                ),
-                                decoration: BoxDecoration(
+                                  ),
+                                  decoration: BoxDecoration(
                                     color: isDark
                                         ? ThemeHelper.getElevatedColor(context)
                                         : Colors.grey[200],
@@ -317,76 +317,90 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
                                             blur: 4,
                                           )
                                         : null,
-                                ),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                        flex: ResponsiveHelper.isSmallMobile(context) ? 1 : 2,
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
+                                  ),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        flex:
+                                            ResponsiveHelper.isSmallMobile(
+                                              context,
+                                            )
+                                            ? 1
+                                            : 2,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
                                           children: [
-                                          Text(
-                                            'NUMBER OF',
-                                            style: TextStyle(
+                                            Text(
+                                              'NUMBER OF',
+                                              style: TextStyle(
                                                 fontSize:
                                                     ResponsiveHelper.fontSize(
                                                       context,
                                                       11,
                                                     ),
-                                              fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.bold,
                                                 color: ThemeHelper.getTextColor(
                                                   context,
                                                 ),
+                                              ),
                                             ),
-                                          ),
-                                          Text(
-                                            'STUDENTS',
-                                            style: TextStyle(
+                                            Text(
+                                              'STUDENTS',
+                                              style: TextStyle(
                                                 fontSize:
                                                     ResponsiveHelper.fontSize(
                                                       context,
                                                       11,
                                                     ),
-                                              fontWeight: FontWeight.bold,
+                                                fontWeight: FontWeight.bold,
                                                 color: ThemeHelper.getTextColor(
                                                   context,
                                                 ),
+                                              ),
                                             ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
-                                    ),
-                                    Expanded(
-                                        flex: ResponsiveHelper.isSmallMobile(context) ? 2 : 3,
-                                      child: Container(
+                                      Expanded(
+                                        flex:
+                                            ResponsiveHelper.isSmallMobile(
+                                              context,
+                                            )
+                                            ? 2
+                                            : 3,
+                                        child: Container(
                                           padding: EdgeInsets.only(
                                             left: ResponsiveHelper.spacing(
                                               context,
-                                              ResponsiveHelper.isSmallMobile(context) ? 8 : 16,
+                                              ResponsiveHelper.isSmallMobile(
+                                                    context,
+                                                  )
+                                                  ? 8
+                                                  : 16,
                                             ),
-                                        ),
-                                        decoration: BoxDecoration(
-                                          border: Border(
-                                            left: BorderSide(
+                                          ),
+                                          decoration: BoxDecoration(
+                                            border: Border(
+                                              left: BorderSide(
                                                 color: isDark
                                                     ? ThemeHelper.getBorderColor(
                                                         context,
                                                       )
                                                     : Colors.grey[400]!,
-                                              width: 1,
+                                                width: 1,
                                               ),
                                             ),
                                           ),
                                           child: Text(
-                                          'NAME',
-                                          style: TextStyle(
+                                            'NAME',
+                                            style: TextStyle(
                                               fontSize:
                                                   ResponsiveHelper.fontSize(
                                                     context,
                                                     14,
                                                   ),
-                                            fontWeight: FontWeight.bold,
+                                              fontWeight: FontWeight.bold,
                                               color: ThemeHelper.getTextColor(
                                                 context,
                                               ),
@@ -395,14 +409,14 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
                                         ),
                                       ),
                                     ],
-                                    ),
+                                  ),
                                 ),
                                 SizedBox(
                                   height: ResponsiveHelper.spacing(context, 8),
-                              ),
+                                ),
 
-                              // Student List
-                              if (_students.isEmpty)
+                                // Student List
+                                if (_students.isEmpty)
                                   Padding(
                                     padding: ResponsiveHelper.padding(
                                       context,
@@ -411,10 +425,10 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
                                         32,
                                       ),
                                     ),
-                                  child: Center(
-                                    child: Text(
-                                      'No students in this classroom yet',
-                                      style: TextStyle(
+                                    child: Center(
+                                      child: Text(
+                                        'No students in this classroom yet',
+                                        style: TextStyle(
                                           fontSize: ResponsiveHelper.fontSize(
                                             context,
                                             14,
@@ -423,26 +437,26 @@ class _TeacherClassroomScreenState extends State<TeacherClassroomScreen> {
                                               ThemeHelper.getSecondaryTextColor(
                                                 context,
                                               ),
+                                        ),
                                       ),
                                     ),
+                                  )
+                                else
+                                  ...List.generate(
+                                    _students.length,
+                                    (index) => _buildStudentRow(
+                                      studentNumber: index + 1,
+                                      student: _students[index],
+                                    ),
                                   ),
-                                )
-                              else
-                                ...List.generate(
-                                  _students.length,
-                                  (index) => _buildStudentRow(
-                                    studentNumber: index + 1,
-                                    student: _students[index],
-                                  ),
-                                ),
 
                                 SizedBox(
                                   height: ResponsiveHelper.spacing(context, 20),
                                 ),
-                            ],
+                              ],
                             ),
                           ),
-                        ),
+                  ),
                 ),
               ),
             ],
@@ -590,75 +604,75 @@ class _CreateClassroomPageState extends State<_CreateClassroomPage> {
       body: Container(
         decoration: BoxDecoration(
           gradient: ThemeHelper.getBackgroundGradient(context),
-      ),
+        ),
         child: Padding(
           padding: ResponsiveHelper.padding(
             context,
             all: ResponsiveHelper.contentPadding(context),
           ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _buildTextField(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildTextField(
                         context,
-                      'Classroom Name:',
-                      _classroomNameController,
-                      'Enter classroom name',
-                    ),
+                        'Classroom Name:',
+                        _classroomNameController,
+                        'Enter classroom name',
+                      ),
                       SizedBox(height: ResponsiveHelper.spacing(context, 24)),
-                    _buildTextField(
+                      _buildTextField(
                         context,
-                      'Grade and Section:',
-                      _gradeAndSectionController,
-                      'e.g., Grade 7 - Section A',
-                    ),
+                        'Grade and Section:',
+                        _gradeAndSectionController,
+                        'e.g., Grade 9 - Section A',
+                      ),
                       SizedBox(height: ResponsiveHelper.spacing(context, 24)),
-                    _buildTextField(
+                      _buildTextField(
                         context,
-                      'Classroom Code:',
-                      _classroomCodeController,
-                      'Enter classroom code',
-                      isNumeric: true,
-                    ),
-                    if (_errorMessage != null) ...[
+                        'Classroom Code:',
+                        _classroomCodeController,
+                        'Enter classroom code',
+                        isNumeric: true,
+                      ),
+                      if (_errorMessage != null) ...[
                         SizedBox(height: ResponsiveHelper.spacing(context, 16)),
                         CustomCard(
                           child: Padding(
                             padding: ResponsiveHelper.padding(
                               context,
                               all: ResponsiveHelper.spacing(context, 12),
-                        ),
-                        child: Row(
-                          children: [
-                            Icon(
-                              Icons.error_outline,
-                              color: Colors.red[700],
+                            ),
+                            child: Row(
+                              children: [
+                                Icon(
+                                  Icons.error_outline,
+                                  color: Colors.red[700],
                                   size: ResponsiveHelper.iconSize(context, 20),
                                 ),
                                 SizedBox(
                                   width: ResponsiveHelper.spacing(context, 8),
-                            ),
-                            Expanded(
-                              child: Text(
-                                _errorMessage!,
-                                style: TextStyle(
-                                  color: Colors.red[700],
+                                ),
+                                Expanded(
+                                  child: Text(
+                                    _errorMessage!,
+                                    style: TextStyle(
+                                      color: Colors.red[700],
                                       fontSize: ResponsiveHelper.fontSize(
                                         context,
                                         14,
                                       ),
-                                  fontWeight: FontWeight.w500,
+                                      fontWeight: FontWeight.w500,
+                                    ),
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
+                          ),
                         ),
                       ],
                     ],
@@ -666,14 +680,14 @@ class _CreateClassroomPageState extends State<_CreateClassroomPage> {
                 ),
               ),
               SizedBox(height: ResponsiveHelper.spacing(context, 20)),
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
                       onPressed: _isLoading
                           ? null
                           : () => Navigator.pop(context),
-                    style: OutlinedButton.styleFrom(
+                      style: OutlinedButton.styleFrom(
                         padding: EdgeInsets.symmetric(
                           vertical: ResponsiveHelper.height(context, 16),
                         ),
@@ -682,30 +696,30 @@ class _CreateClassroomPageState extends State<_CreateClassroomPage> {
                               ? ThemeHelper.getBorderColor(context)
                               : Colors.grey,
                         ),
-                    ),
+                      ),
                       child: Text(
-                      'CANCEL',
-                      style: TextStyle(
+                        'CANCEL',
+                        style: TextStyle(
                           color: isDark
                               ? ThemeHelper.getSecondaryTextColor(context)
                               : Colors.grey,
-                        fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w600,
                           fontSize: ResponsiveHelper.fontSize(context, 14),
                         ),
                       ),
                     ),
                   ),
                   SizedBox(width: ResponsiveHelper.spacing(context, 16)),
-                Expanded(
+                  Expanded(
                     child: PrimaryButton(
-                      text: 'CREATE CLASSROOM',
-                    onPressed: _isLoading ? null : _handleCreateClassroom,
+                      text: 'CREATE',
+                      onPressed: _isLoading ? null : _handleCreateClassroom,
                       isLoading: _isLoading,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
           ),
         ),
       ),

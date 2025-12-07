@@ -133,10 +133,6 @@ class _LessonListScreenState extends State<LessonListScreen> {
         return '1ST QUARTER';
       case 2:
         return '2ND QUARTER';
-      case 3:
-        return '3RD QUARTER';
-      case 4:
-        return '4TH QUARTER';
       default:
         return '';
     }

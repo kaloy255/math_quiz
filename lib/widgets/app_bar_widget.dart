@@ -44,7 +44,7 @@ class MathQuestAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   child: Center(
                     child: Image.asset(
-                      'assets/app_logo.png',
+                      'assets/logo-app.png',
                       width: ResponsiveHelper.iconSize(context, 28),
                       height: ResponsiveHelper.iconSize(context, 28),
                       fit: BoxFit.contain,

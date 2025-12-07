@@ -79,22 +79,27 @@ class _StudentPerformanceScreenState extends State<StudentPerformanceScreen> {
     switch (quarter) {
       case 1:
         return [
-          {'id': '1', 'title': 'Introduction to Variables'},
-          {'id': '2', 'title': 'Expressions and Operations'},
-          {'id': '3', 'title': 'Order of Operations'},
-          {'id': '4', 'title': 'Simplifying Expressions'},
-          {'id': '5', 'title': 'Evaluating Expressions'},
-          {'id': '6', 'title': 'Properties of Real Numbers'},
+          {'id': '1', 'title': 'Quiz 1'},
+          {'id': '2', 'title': 'Quiz 2'},
+          {'id': '3', 'title': 'Quiz 3'},
+          {'id': '4', 'title': 'Quiz 4'},
+          {'id': '5', 'title': 'Quiz 5'},
+          {'id': '6', 'title': 'Quiz 6'},
+          {'id': '7', 'title': 'Quiz 7'},
+          {'id': '8', 'title': 'Quiz 8'},
+          {'id': '9', 'title': 'Quiz 9'},
         ];
       case 2:
         return [
-          {'id': '1', 'title': 'One-Step Equations'},
-          {'id': '2', 'title': 'Two-Step Equations'},
-          {'id': '3', 'title': 'Multi-Step Equations'},
-          {'id': '4', 'title': 'Equations with Variables'},
-          {'id': '5', 'title': 'Word Problems Part 1'},
-          {'id': '6', 'title': 'Translating Phrases'},
-          {'id': '7', 'title': 'Linear Functions'},
+          {'id': '1', 'title': 'Quiz 1'},
+          {'id': '2', 'title': 'Quiz 2'},
+          {'id': '3', 'title': 'Quiz 3'},
+          {'id': '4', 'title': 'Quiz 4'},
+          {'id': '5', 'title': 'Quiz 5'},
+          {'id': '6', 'title': 'Quiz 6'},
+          {'id': '7', 'title': 'Quiz 7'},
+          {'id': '8', 'title': 'Quiz 8'},
+          {'id': '9', 'title': 'Quiz 9'},
         ];
       case 3:
         return [];
@@ -125,10 +130,6 @@ class _StudentPerformanceScreenState extends State<StudentPerformanceScreen> {
         return '1';
       case '2nd Quarter':
         return '2';
-      case '3rd Quarter':
-        return '3';
-      case '4th Quarter':
-        return '4';
       default:
         return '1';
     }
@@ -298,14 +299,6 @@ class _StudentPerformanceScreenState extends State<StudentPerformanceScreen> {
                                 DropdownMenuItem(
                                   value: '2nd Quarter',
                                   child: Text('2nd Quarter'),
-                                ),
-                                DropdownMenuItem(
-                                  value: '3rd Quarter',
-                                  child: Text('3rd Quarter'),
-                                ),
-                                DropdownMenuItem(
-                                  value: '4th Quarter',
-                                  child: Text('4th Quarter'),
                                 ),
                               ],
                               onChanged: (v) {

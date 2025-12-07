@@ -273,14 +273,6 @@ class _ViewPreviousQuizScreenState extends State<ViewPreviousQuizScreen> {
                               width: ResponsiveHelper.spacing(context, 8),
                             ),
                             Expanded(child: _buildQuarterFilterTab('2nd', 2)),
-                            SizedBox(
-                              width: ResponsiveHelper.spacing(context, 8),
-                            ),
-                            Expanded(child: _buildQuarterFilterTab('3rd', 3)),
-                            SizedBox(
-                              width: ResponsiveHelper.spacing(context, 8),
-                            ),
-                            Expanded(child: _buildQuarterFilterTab('4th', 4)),
                           ],
                         ),
                       ],

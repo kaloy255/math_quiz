@@ -127,35 +127,6 @@ class _LessonPageScreenState extends State<LessonPageScreen> {
                                 ],
                               ),
                               SizedBox(
-                                height: ResponsiveHelper.spacing(context, 16),
-                              ),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: _buildQuarterButton(
-                                      context,
-                                      '3RD',
-                                      'QUARTER',
-                                      3,
-                                    ),
-                                  ),
-                                  SizedBox(
-                                    width: ResponsiveHelper.spacing(
-                                      context,
-                                      16,
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: _buildQuarterButton(
-                                      context,
-                                      '4TH',
-                                      'QUARTER',
-                                      4,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(
                                 height: ResponsiveHelper.height(context, 180),
                               ),
                             ],
